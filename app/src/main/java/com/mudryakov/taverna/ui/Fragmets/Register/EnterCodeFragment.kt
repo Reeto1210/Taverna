@@ -40,18 +40,20 @@ class EnterCodeFragment(val phoneNumber: String, val id: String) :
     fun addUser() {
         val uid = AUTH.currentUser?.uid.toString()
         var dateMap = mutableMapOf<String, Any>()
-
         dateMap[CHILD_ID] = uid
         dateMap[CHILD_PHONE] = phoneNumber
+              REF_DATABASE_ROOT.child(NODE_PHONES).child(phoneNumber).setValue(uid).addOnSuccessListener {
+                  REF_DATABASE_ROOT.child(NODE_USERS).child(uid).updateChildren(dateMap)
+                      .addOnCompleteListener {
+                          if (it.isSuccessful) {
+                              showToast("Добро пожаловать")
+                              (activity as RegisterActivity).replaceActivity(MainActivity())
+                          } else {
+                              showToast(it.exception?.message.toString())
+                          }
+                      }
+              }
+                  .addOnFailureListener { showToast("Произошла ошибка") }
+              }
 
-               REF_DATABASE_ROOT.child(NODE_USERS).child(uid).updateChildren(dateMap)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    showToast("Добро пожаловать")
-                    (activity as RegisterActivity).replaceActivity(MainActivity())
-                } else {
-                    showToast(it.exception?.message.toString())
-                }
-            }
-    }
 }

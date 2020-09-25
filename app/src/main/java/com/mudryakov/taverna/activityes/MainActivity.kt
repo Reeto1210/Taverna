@@ -16,6 +16,9 @@ import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
@@ -27,7 +30,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initFireBase()
         initUser {
-            initContacts()
+            CoroutineScope(Dispatchers.IO).launch{
+                initContacts()
+            }
+
             initFields()
             initFunc()
         }
@@ -68,11 +74,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         appStatus.changeState(appStatus.ONLINE)
     }
-    fun initContacts(){
-        if (checkPermission(READ_CONTACTS)){
-            showToast("Чтение контактов")}
-        else{}
-    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
