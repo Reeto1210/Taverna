@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     lateinit var myDrawer: AppDrawer
     private lateinit var mToolbar: androidx.appcompat.widget.Toolbar
-
+lateinit var a:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
