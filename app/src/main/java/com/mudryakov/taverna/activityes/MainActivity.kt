@@ -2,9 +2,11 @@ package com.mudryakov.taverna.activityes
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.databinding.ActivityMainBinding
 import com.mudryakov.taverna.models.Users
@@ -19,12 +21,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     lateinit var myDrawer: AppDrawer
     private lateinit var mToolbar: androidx.appcompat.widget.Toolbar
-lateinit var a:String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initFireBase()
         initUser {
+            initContacts()
             initFields()
             initFunc()
         }
@@ -64,5 +67,18 @@ lateinit var a:String
     override fun onStart() {
         super.onStart()
         appStatus.changeState(appStatus.ONLINE)
+    }
+    fun initContacts(){
+        if (checkPermission(READ_CONTACTS)){
+            showToast("Чтение контактов")}
+        else{}
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (ContextCompat.checkSelfPermission(APP_ACTIVITY, READ_CONTACTS)== PackageManager.PERMISSION_GRANTED){
+        initContacts()
+    }
     }
 }
