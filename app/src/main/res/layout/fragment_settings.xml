@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Fragmets.Settings.SettingsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setingsShapka"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/SettingsShapkaHeight"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ic_settings_profile"
+            android:layout_width="@dimen/SettingsUserPhoto"
+            android:layout_height="@dimen/SettingsUserPhoto"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="@dimen/SettingPhotoMarginBottom"
+            android:src="@drawable/bomjara"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvUserNameSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/LeftMargin"
+            android:layout_marginTop="@dimen/LeftMargin"
+            android:layout_marginBottom="@dimen/SettingTvUsernameMarginBot"
+            android:text="@string/settingsDefaultUserName"
+            android:textColor="@color/material_drawer_dark_primary_text"
+            android:textSize="@dimen/NormalText"
+            android:textStyle="bold"
+            android:theme="@style/AppThemeLight"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ic_settings_profile"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvSettingsOnline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/SettingDefualtStatus"
+            android:textSize="@dimen/SmallText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ic_settings_profile"
+            app:layout_constraintTop_toBottomOf="@+id/tvUserNameSettings"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+
+        android:id="@+id/SettingsAccSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/SettingsAccount"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/SmallText"
+        android:textStyle="bold"
+        android:theme="@style/MaterialDrawerTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setingsShapka" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+
+
+        android:background="@color/material_drawer_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/SettingsAccSettings" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btnSettingsChangePhoneNumber"
+        style="@style/SettingsButtons"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SettingsAccSettings">
+
+        <TextView
+            android:id="@+id/SettingsPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/LeftMargin"
+            android:layout_marginTop="@dimen/settingsTopMargin"
+            android:text="@string/StandartPhone"
+            android:textColor="@color/material_drawer_primary_text"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.217" />
+
+        <TextView
+            android:id="@+id/SettingsChangePhone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/LeftMargin"
+            android:layout_marginBottom="7dp"
+            android:text="@string/SettingsBtnPhoneChange"
+            android:textColor="@color/material_drawer_secondary_text"
+            android:textSize="@dimen/SmallText"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/SettingsPhoneNumber" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/material_drawer_divider"
+
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSettingsChangePhoneNumber" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btnSettingsChangeUsername"
+        style="@style/SettingsButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSettingsChangePhoneNumber">
+
+        <TextView
+            android:id="@+id/SettingsUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/LeftMargin"
+            android:layout_marginTop="@dimen/settingsTopMargin"
+            android:text="@string/standartName"
+            android:textColor="@color/material_drawer_primary_text"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.217" />
+
+        <TextView
+            android:id="@+id/SettingsBtnChangeUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/LeftMargin"
+            android:layout_marginBottom="7dp"
+            android:text="@string/SettingsUserName"
+            android:textColor="@color/material_drawer_secondary_text"
+            android:textSize="@dimen/SmallText"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/SettingsUsername" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+
+
+        android:background="@color/material_drawer_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSettingsChangeUsername" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btnSettingsChangeAboutMe"
+        style="@style/SettingsButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSettingsChangeUsername">
+
+        <TextView
+            android:id="@+id/SettingsAboutMe"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/LeftMargin"
+            android:layout_marginTop="@dimen/settingsTopMargin"
+            android:text="@string/aboutMe"
+            android:textColor="@color/material_drawer_primary_text"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.217" />
+
+        <TextView
+            android:id="@+id/SettingsChangeAboutMe"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/LeftMargin"
+            android:layout_marginBottom="7dp"
+            android:text="@string/askAbout"
+            android:textColor="@color/material_drawer_secondary_text"
+            android:textSize="@dimen/SmallText"
+            android:theme="@style/MaterialDrawerTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/SettingsAboutMe" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/material_drawer_divider"
+
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSettingsChangeAboutMe" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/SettingsBtnNewAvatar"
+        android:layout_width="@dimen/SettingCameraIcon"
+        android:layout_height="@dimen/SettingCameraIcon"
+
+        android:layout_marginEnd="@dimen/LeftMargin"
+        android:clickable="true"
+
+        android:src="@drawable/ic_camera"
+        app:civ_border_color="@color/material_drawer_secondary_text"
+        app:civ_border_width="1dp"
+        app:civ_circle_background_color="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="@+id/setingsShapka"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setingsShapka"
+        android:focusable="true" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Taverna</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settingsDefaultUserName">Гриша</string>
+    <string name="SettingDefualtStatus">Online</string>
+    <string name="SettingsAccount">Аккаунт</string>
+    <string name="StandartPhone">+8148814881488</string>
+    <string name="SettingsBtnPhoneChange">Нажимте что бы изменить номер телефона</string>
+    <string name="standartName">Бомж Гриша</string>
+    <string name="SettingsUserName">Имя Пользователя</string>
+    <string name="askAbout">Напишите немного о себе</string>
+    <string name="aboutMe">О себе</string>
+    <string name="changeUser">Изменить имя</string>
+    <string name="settings_toolbar_exit">Выход</string>
+    <string name="register_code">Введите код</string>
+    <string name="we_send_code">Мы отправили текст с кодом проверки на ваш телефон</string>
+    <string name="Register_give_ur_number">Введите номер телефона</string>
+    <string name="Register_add_ur_phone_hint">- - - - - - - - - - - -</string>
+    <string name="Toast_change_data">Данные изменены</string>
+</resources>
