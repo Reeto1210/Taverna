@@ -18,10 +18,12 @@ lateinit var REF_STORAGE_ROOT: StorageReference
 lateinit var USER: Users
 lateinit var CURRENT_UID: String
 
+const val NODE_PHONES_CONTACTS = "phone_contacts"
 const val NODE_PHONES = "phones"
 const val NODE_PROFILE_IMG = "profileImg"
 const val NODE_USERNAMES = "usernames"
 const val NODE_USERS = "users"
+
 const val CHILD_ID = "id"
 const val CHILD_PHONE = "phoneNumber"
 const val CHILD_USERNAME = "username"
@@ -59,31 +61,56 @@ inline fun addUrlBase(url: String, crossinline function: () -> Unit) {
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast("Произошла ошибка") }
 }
+
 inline fun initUser(crossinline function: () -> Unit) {
     REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
         .addListenerForSingleValueEvent(appValueEventListener {
             USER = it.getValue(Users::class.java) ?: Users()
-           function()
-        }) }
-fun initContacts(){
-    if (checkPermission(READ_CONTACTS)){
-       var arrayContacts = arrayListOf<CommonModel>()
-   val cursor = APP_ACTIVITY.contentResolver.query(
-       ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-       null,
-       null,
-       null,
-       null
-   )
-        cursor?.let{
-            while (it.moveToNext()){
-                val fullName = it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-           val phone =it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replace(Regex("[\\s,-]"),"")
-                val newModel = CommonModel(fullName=fullName, phoneNumber = phone)
-          arrayContacts.add(newModel)
+            function()
+        })
+}
+
+fun initContacts() {
+    if (checkPermission(READ_CONTACTS)) {
+        var arrayContacts = arrayListOf<CommonModel>()
+        val cursor = APP_ACTIVITY.contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
+        cursor?.let {
+            while (it.moveToNext()) {
+                val fullName =
+                    it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                val phone =
+                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        .replace(Regex("[\\s,-]"), "")
+                val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
+                arrayContacts.add(newModel)
             }
         }
-   cursor?.close()
+        cursor?.close()
+        REF_DATABASE_ROOT.child(NODE_PHONES).addListenerForSingleValueEvent(appValueEventListener {
+            it.children.forEach { snapshot ->
+                arrayContacts.forEach { contact ->
+                    if (snapshot.key == contact.phoneNumber) {
+                        REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                            .child(CURRENT_UID)
+                            .child(snapshot.value.toString())
+                            .child(CHILD_ID).setValue(snapshot.value.toString())
+                        REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                            .child(CURRENT_UID)
+                            .child(snapshot.value.toString())
+                            .child(CHILD_PHONE).setValue(snapshot.key)
+
+                    }
+
+                }
+
+            }
+        })
     }
 
 }

@@ -38,6 +38,8 @@ android {
         implementation "androidx.constraintlayout:constraintlayout:2.0.1"
         api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 // Add for NavController support
+        implementation 'com.firebaseui:firebase-ui-database:6.3.0'
+
         implementation "com.mikepenz:materialdrawer-nav:7.0.0"
         implementation fileTree(dir: "libs", include: ["*.jar"])
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

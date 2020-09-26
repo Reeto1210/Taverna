@@ -1,5 +1,6 @@
 package com.mudryakov.taverna.ui.Objects
 
+import ContactsFragment
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
@@ -124,13 +125,17 @@ class AppDrawer(var activity: AppCompatActivity, val Toolbar: Toolbar) {
                     position: Int,
                     drawerItem: IDrawerItem<*>
                 ): Boolean {
-                    when (position) {
-                        7 -> activity.changeFragment(SettingsFragment())
-
-                    }
+                   onClickDrawer(position)
                     return false
                 }
             }).build()
+    }
+
+    private fun onClickDrawer(position: Int) {
+        when (position) {
+            7 -> activity.changeFragment(SettingsFragment())
+            4 -> activity.changeFragment(ContactsFragment())
+        }
     }
 
     fun createHeader() {

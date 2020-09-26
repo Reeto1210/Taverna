@@ -14,7 +14,7 @@ class EnterCodeFragment(val phoneNumber: String, val id: String) :
     Fragment(R.layout.fragment_enter_code) {
 
     override fun onStart() {
-        (activity as RegisterActivity).title = phoneNumber
+        APP_ACTIVITY.title = phoneNumber
         super.onStart()
 
         Register_enterCode.addTextChangedListener(MyTextWhatcher {
@@ -42,6 +42,9 @@ class EnterCodeFragment(val phoneNumber: String, val id: String) :
         var dateMap = mutableMapOf<String, Any>()
         dateMap[CHILD_ID] = uid
         dateMap[CHILD_PHONE] = phoneNumber
+
+
+
               REF_DATABASE_ROOT.child(NODE_PHONES).child(phoneNumber).setValue(uid).addOnSuccessListener {
                   REF_DATABASE_ROOT.child(NODE_USERS).child(uid).updateChildren(dateMap)
                       .addOnCompleteListener {

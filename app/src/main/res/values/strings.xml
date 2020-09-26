@@ -18,4 +18,5 @@
     <string name="Register_give_ur_number">Введите номер телефона</string>
     <string name="Register_add_ur_phone_hint">- - - - - - - - - - - -</string>
     <string name="Toast_change_data">Данные изменены</string>
+    <string name="Contacts_title">Контакты</string>
 </resources>

@@ -23,10 +23,13 @@ import java.lang.Exception
 
 class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
+
+
     override fun onResume() {
         super.onResume()
         setHasOptionsMenu(true)
-        addInfoUser()
+
+                addInfoUser()
         btnSettingsChangeUsername.setOnClickListener {
             APP_ACTIVITY.changeFragment(
                 ChangeUserNameFragment()
@@ -81,7 +84,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         ) {
             val uri = CropImage.getActivityResult(data).uri
             val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG).child(CURRENT_UID)
-            putImageToStorage(path, uri) {
+                putImageToStorage(path, uri) {
                 downloadUrl(path) {
                     addUrlBase(it) {
                         USER.photoUrl = it
@@ -98,6 +101,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
 
     fun addInfoUser() {
+
         tvUserNameSettings.text = setFullnameUi()
         SettingsPhoneNumber.text = USER.phoneNumber
         SettingsAboutMe.text = USER.bio

@@ -36,15 +36,11 @@
         <item name="android:background">@drawable/myripple</item>
     </style>
 
-    <style name="ActionMenu" parent="@style/Theme.AppCompat.Light">
-
-            <!-- Used for the buttons -->
-
-            <!-- Used for the title and text -->
-            <item name="android:textColorPrimary">@android:color/widget_edittext_dark</item>
-            <!-- Used for the background -->
-            <item name="android:background">@color/md_blue_grey_50</item>
+    <style name="ActionMenu" parent="Theme.AppCompat.Light">
+        <item name="background">@color/colorAccent</item>
         <item name="actionMenuTextColor">@color/md_black_1000</item>
+
+
     </style>
     <style name="FAB" parent="ActionMenu">
         <item name="colorAccent">@color/colorPrimary</item>
