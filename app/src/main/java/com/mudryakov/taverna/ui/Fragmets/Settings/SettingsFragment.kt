@@ -66,9 +66,11 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.exit -> {
+                appStatus.changeState(appStatus.OFFLINE)
                 AUTH.signOut()
                 (APP_ACTIVITY).replaceActivity(RegisterActivity())
-                APP_ACTIVITY.finish()
+                 APP_ACTIVITY.finish()
+
             }
             R.id.changeName ->
                 APP_ACTIVITY.changeFragment(SettingsChangeUserFullName())

@@ -9,7 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import com.google.firebase.database.DataSnapshot
 import com.mudryakov.taverna.R
+import com.mudryakov.taverna.models.CommonModel
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -62,3 +64,4 @@ fun setFullnameUi():String{
     } else return  USER.fullName.capitalize()
 
 }
+fun DataSnapshot.getCommonModel() = this.getValue(CommonModel::class.java) ?: CommonModel()

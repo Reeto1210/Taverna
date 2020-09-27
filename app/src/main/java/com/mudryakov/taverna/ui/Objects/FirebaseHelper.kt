@@ -86,7 +86,7 @@ fun initContacts() {
                     it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                 val phone =
                     it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                        .replace(Regex("[\\s,-]"), "")
+                        .replace(Regex("[\\s,-]"), "").replace("8","+7")
                 val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
                 arrayContacts.add(newModel)
             }

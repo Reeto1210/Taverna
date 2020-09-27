@@ -17,20 +17,21 @@ class EnterPhoneFragment : Fragment(R.layout.fragment_enter_phone) {
     private lateinit var phoneNumber: String
     private lateinit var callBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
+
     override fun onStart() {
         super.onStart()
-                callBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+        callBack = object: PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
 
             }
 
-            override fun onVerificationFailed(p0: FirebaseException?) {
+            override fun onVerificationFailed(p0: FirebaseException) {
                 showToast(p0?.message.toString())
             }
 
-            override fun onCodeSent(id: String, token: PhoneAuthProvider.ForceResendingToken?) {
-                super.onCodeSent(id, token)
-changeFragment(EnterCodeFragment(phoneNumber,id))
+            override fun onCodeSent(id: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                super.onCodeSent(id, p1)
+                changeFragment(EnterCodeFragment(phoneNumber,id))
             }
         }
         register_btn_next.setOnClickListener { sentCode() }
@@ -49,7 +50,6 @@ changeFragment(EnterCodeFragment(phoneNumber,id))
                 callBack
             )
 
-            //changeFragment(EnterCodeFragment())
-        }
+                  }
     }
 }

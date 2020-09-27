@@ -1,21 +1,74 @@
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.snapshot.Node
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.ui.Objects.APP_ACTIVITY
+import com.mudryakov.taverna.ui.Objects.*
+import kotlinx.android.synthetic.main.contacts_view.view.*
+import kotlinx.android.synthetic.main.fragment_contacts.*
 
 class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
-   lateinit var mRecycleView:RecyclerView
-    lateinit var adapter:FirebaseRecyclerAdapter<CommonModel, contactHolder>
+    lateinit var myReference: DatabaseReference
+    lateinit var mRecycleView: RecyclerView
+    lateinit var myAdapter: FirebaseRecyclerAdapter<CommonModel, contactHolder>
+    lateinit var myUsers: DatabaseReference
 
-    class contactHolder (view: View):RecyclerView.ViewHolder(view){
-
+    class contactHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val name = view.contact_fullname
+        val status = view.contacts_status
+        val image = view.contacts_circleImageView
     }
+
 
     override fun onResume() {
         super.onResume()
         APP_ACTIVITY.title = getString(R.string.Contacts_title)
+        initRecycleView()
+    }
+
+    private fun initRecycleView() {
+        myReference = REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS).child(CURRENT_UID)
+        mRecycleView = Contacts_recycleView
+        var options = FirebaseRecyclerOptions.Builder<CommonModel>()
+            .setQuery(myReference, CommonModel::class.java)
+            .build()
+
+        myAdapter = object : FirebaseRecyclerAdapter<CommonModel, contactHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): contactHolder {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.contacts_view, parent, false)
+                return contactHolder(view)
+            }
+
+            override fun onBindViewHolder(
+                holder: contactHolder,
+                position: Int,
+                model: CommonModel
+            ) {
+
+                myUsers = REF_DATABASE_ROOT.child(NODE_USERS).child(model.id)
+
+                myUsers.addValueEventListener(appValueEventListener {
+                    val contact = it.getCommonModel()
+                    holder.name.text = contact.fullName
+                    holder.status.text = contact.status
+                    holder.image.downloadAndSetImage(contact.photoUrl)
+
+                })
+            }
+        }
+        mRecycleView.adapter = myAdapter
+        myAdapter.startListening()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        myAdapter.stopListening()
     }
 }
