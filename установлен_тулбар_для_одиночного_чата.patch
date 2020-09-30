@@ -1,0 +1,163 @@
+Index: app/src/main/res/layout-v21/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-v21/activity_main.xml	(revision 1c6e359c3e4b89be09a2bc29e7c9b625e910d9a0)
++++ app/src/main/res/layout-v21/activity_main.xml	(date 1601412511555)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<androidx.constraintlayout.widget.ConstraintLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+@@ -14,7 +15,15 @@
+         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
++        app:layout_constraintTop_toTopOf="parent">
++        <include
++            layout="@layout/toolbar_for_chat"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            android:visibility="gone"
++            />
++
++    </androidx.appcompat.widget.Toolbar>
+ 
+     <androidx.constraintlayout.widget.ConstraintLayout
+         android:id="@+id/dataConteiner"
+@@ -26,4 +35,5 @@
+         app:layout_constraintTop_toBottomOf="@id/toolbar_main"/>
+ 
+ 
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/mudryakov/taverna/ui/Fragmets/ContactsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/mudryakov/taverna/ui/Fragmets/ContactsFragment.kt	(revision 1c6e359c3e4b89be09a2bc29e7c9b625e910d9a0)
++++ app/src/main/java/com/mudryakov/taverna/ui/Fragmets/ContactsFragment.kt	(date 1601477313371)
+@@ -9,6 +9,7 @@
+ import com.mudryakov.taverna.R
+ import com.mudryakov.taverna.models.CommonModel
+ import com.mudryakov.taverna.ui.Fragmets.BaseFragment
++import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
+ import com.mudryakov.taverna.ui.Objects.*
+ import kotlinx.android.synthetic.main.contacts_view.view.*
+ import kotlinx.android.synthetic.main.fragment_contacts.*
+@@ -18,6 +19,8 @@
+     lateinit var mRecycleView: RecyclerView
+     lateinit var myAdapter: FirebaseRecyclerAdapter<CommonModel, contactHolder>
+     lateinit var myUsers: DatabaseReference
++    lateinit var mRefUserListener: appValueEventListener
++    var listenersHashMap = HashMap<DatabaseReference, appValueEventListener>()
+ 
+     class contactHolder(view: View) : RecyclerView.ViewHolder(view) {
+         val name = view.contact_fullname
+@@ -35,7 +38,7 @@
+     private fun initRecycleView() {
+         myReference = REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS).child(CURRENT_UID)
+         mRecycleView = Contacts_recycleView
+-        var options = FirebaseRecyclerOptions.Builder<CommonModel>()
++        val options = FirebaseRecyclerOptions.Builder<CommonModel>()
+             .setQuery(myReference, CommonModel::class.java)
+             .build()
+ 
+@@ -53,15 +56,18 @@
+             ) {
+ 
+                 myUsers = REF_DATABASE_ROOT.child(NODE_USERS).child(model.id)
+-
+-                myUsers.addValueEventListener(appValueEventListener {
++                mRefUserListener = appValueEventListener {
+                     val contact = it.getCommonModel()
+                     holder.name.text = contact.fullName
+                     holder.status.text = contact.status
+                     holder.image.downloadAndSetImage(contact.photoUrl)
++                    holder.itemView.setOnClickListener { APP_ACTIVITY.changeFragment(SingleChatFragment(contact.id)) }
++                }
++                myUsers.addValueEventListener(mRefUserListener)
++                listenersHashMap[myUsers] = mRefUserListener
+ 
+-                })
+             }
++
+         }
+         mRecycleView.adapter = myAdapter
+         myAdapter.startListening()
+@@ -70,5 +76,6 @@
+     override fun onPause() {
+         super.onPause()
+         myAdapter.stopListening()
++        listenersHashMap.forEach { it.key.removeEventListener(it.value) }
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/mudryakov/taverna/ui/Objects/funs.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/mudryakov/taverna/ui/Objects/funs.kt	(revision 1c6e359c3e4b89be09a2bc29e7c9b625e910d9a0)
++++ app/src/main/java/com/mudryakov/taverna/ui/Objects/funs.kt	(date 1601306696402)
+@@ -45,7 +45,8 @@
+ fun ImageView.downloadAndSetImage(url:String){
+            Picasso.get()
+             .load(url)
+-            .placeholder(R.drawable.bomjara)
++               .error(R.drawable.bomjara)
++               .placeholder(R.drawable.bomjara)
+                .fit()
+                .into(this)
+ 
+Index: app/src/main/java/com/mudryakov/taverna/activityes/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/mudryakov/taverna/activityes/MainActivity.kt	(revision 1c6e359c3e4b89be09a2bc29e7c9b625e910d9a0)
++++ app/src/main/java/com/mudryakov/taverna/activityes/MainActivity.kt	(date 1601480496490)
+@@ -46,7 +46,6 @@
+ 
+ 
+     private fun initFields() {
+-
+         mToolbar = mBinding.toolbarMain!!
+         myDrawer = AppDrawer(this, mToolbar)
+ 
+Index: app/src/main/java/com/mudryakov/taverna/ui/Objects/AppDrawer.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/mudryakov/taverna/ui/Objects/AppDrawer.kt	(revision 1c6e359c3e4b89be09a2bc29e7c9b625e910d9a0)
++++ app/src/main/java/com/mudryakov/taverna/ui/Objects/AppDrawer.kt	(date 1601480709476)
+@@ -20,10 +20,11 @@
+ import com.mikepenz.materialdrawer.util.DrawerImageLoader
+ import com.mudryakov.taverna.R
+ import com.mudryakov.taverna.ui.Fragmets.Settings.SettingsFragment
++import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
+ import com.squareup.picasso.Picasso
+ 
+ 
+-class AppDrawer(var activity: AppCompatActivity, val Toolbar: Toolbar) {
++class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
+     private lateinit var currentProfile: ProfileDrawerItem
+     private lateinit var mDrawer: Drawer
+     private lateinit var mHeader: AccountHeader
+@@ -135,7 +136,7 @@
+         when (position) {
+             7 -> activity.changeFragment(SettingsFragment())
+             4 -> activity.changeFragment(ContactsFragment())
+-        }
++                }
+     }
+ 
+     fun createHeader() {
