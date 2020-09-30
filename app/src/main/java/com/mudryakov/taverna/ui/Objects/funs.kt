@@ -45,7 +45,8 @@ fun AppCompatActivity.changeFragment(newFragment: Fragment, addStack:Boolean = t
 fun ImageView.downloadAndSetImage(url:String){
            Picasso.get()
             .load(url)
-            .placeholder(R.drawable.bomjara)
+               .error(R.drawable.bomjara)
+               .placeholder(R.drawable.bomjara)
                .fit()
                .into(this)
 

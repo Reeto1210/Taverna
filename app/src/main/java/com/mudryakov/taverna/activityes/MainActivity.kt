@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initFields() {
-
         mToolbar = mBinding.toolbarMain!!
         myDrawer = AppDrawer(this, mToolbar)
 

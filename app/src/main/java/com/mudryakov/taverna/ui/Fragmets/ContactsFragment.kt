@@ -9,6 +9,7 @@ import com.google.firebase.database.snapshot.Node
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
+import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
 import com.mudryakov.taverna.ui.Objects.*
 import kotlinx.android.synthetic.main.contacts_view.view.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -18,6 +19,8 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     lateinit var mRecycleView: RecyclerView
     lateinit var myAdapter: FirebaseRecyclerAdapter<CommonModel, contactHolder>
     lateinit var myUsers: DatabaseReference
+    lateinit var mRefUserListener: appValueEventListener
+    var listenersHashMap = HashMap<DatabaseReference, appValueEventListener>()
 
     class contactHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name = view.contact_fullname
@@ -35,7 +38,7 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     private fun initRecycleView() {
         myReference = REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS).child(CURRENT_UID)
         mRecycleView = Contacts_recycleView
-        var options = FirebaseRecyclerOptions.Builder<CommonModel>()
+        val options = FirebaseRecyclerOptions.Builder<CommonModel>()
             .setQuery(myReference, CommonModel::class.java)
             .build()
 
@@ -53,15 +56,18 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
             ) {
 
                 myUsers = REF_DATABASE_ROOT.child(NODE_USERS).child(model.id)
-
-                myUsers.addValueEventListener(appValueEventListener {
+                mRefUserListener = appValueEventListener {
                     val contact = it.getCommonModel()
                     holder.name.text = contact.fullName
                     holder.status.text = contact.status
                     holder.image.downloadAndSetImage(contact.photoUrl)
+                    holder.itemView.setOnClickListener { APP_ACTIVITY.changeFragment(SingleChatFragment(contact.id)) }
+                }
+                myUsers.addValueEventListener(mRefUserListener)
+                listenersHashMap[myUsers] = mRefUserListener
 
-                })
             }
+
         }
         mRecycleView.adapter = myAdapter
         myAdapter.startListening()
@@ -70,5 +76,6 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     override fun onPause() {
         super.onPause()
         myAdapter.stopListening()
+        listenersHashMap.forEach { it.key.removeEventListener(it.value) }
     }
 }

@@ -20,10 +20,11 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.ui.Fragmets.Settings.SettingsFragment
+import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
 import com.squareup.picasso.Picasso
 
 
-class AppDrawer(var activity: AppCompatActivity, val Toolbar: Toolbar) {
+class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
     private lateinit var currentProfile: ProfileDrawerItem
     private lateinit var mDrawer: Drawer
     private lateinit var mHeader: AccountHeader
@@ -135,7 +136,7 @@ class AppDrawer(var activity: AppCompatActivity, val Toolbar: Toolbar) {
         when (position) {
             7 -> activity.changeFragment(SettingsFragment())
             4 -> activity.changeFragment(ContactsFragment())
-        }
+                }
     }
 
     fun createHeader() {
