@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="popupTheme">@style/ActionMenu</item>
         <item name="android:colorBackground">@color/colorAccent</item>
+       <item name ="alertDialogTheme">@style/MyDialogTheme</item>
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/material_drawer_background</item>
         <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
@@ -59,5 +60,7 @@
         <item name="android:textSize">@dimen/NormalText</item>
     <item name="android:textColorHint">@color/material_drawer_secondary_text</item>
     </style>
-
+    <style name="MyDialogTheme" parent="MaterialBaseTheme.Light.AlertDialog">
+       
+    </style>
 </resources>

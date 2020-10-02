@@ -19,4 +19,5 @@
     <string name="Register_add_ur_phone_hint">- - - - - - - - - - - -</string>
     <string name="Toast_change_data">Данные изменены</string>
     <string name="Contacts_title">Контакты</string>
+    <string name="SingleChatMessegaHint">Сообщение</string>
 </resources>

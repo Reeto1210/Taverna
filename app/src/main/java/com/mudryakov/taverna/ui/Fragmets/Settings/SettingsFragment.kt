@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.storage.StorageReference
 import com.mudryakov.taverna.R
@@ -66,10 +67,12 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.exit -> {
-                appStatus.changeState(appStatus.OFFLINE)
-                AUTH.signOut()
-                (APP_ACTIVITY).replaceActivity(RegisterActivity())
-                 APP_ACTIVITY.finish()
+               greateDialogForConfirm("Вы действительно хотите выйти?"){
+                   appStatus.changeState(appStatus.OFFLINE)
+                   AUTH.signOut()
+                   (APP_ACTIVITY).replaceActivity(RegisterActivity())
+                   APP_ACTIVITY.finish()}
+
 
             }
             R.id.changeName ->

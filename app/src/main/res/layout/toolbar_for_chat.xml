@@ -6,7 +6,7 @@
    android:id="@+id/TooolbarForChat"
     android:layout_width="match_parent"
     android:layout_height="@dimen/materialize_toolbar"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    
     android:background="@color/primary"
     >
 

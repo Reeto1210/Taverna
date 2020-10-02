@@ -28,8 +28,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        APP_ACTIVITY = this
+
         initFireBase()
-        initUser {
+
+            initUser {
             CoroutineScope(Dispatchers.IO).launch{
                 initContacts()
             }
@@ -37,8 +40,7 @@ class MainActivity : AppCompatActivity() {
             initFields()
             initFunc()
         }
-        APP_ACTIVITY = this
-        mBinding = ActivityMainBinding.inflate(layoutInflater)
+         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
 

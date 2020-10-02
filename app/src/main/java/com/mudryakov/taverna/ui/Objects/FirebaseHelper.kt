@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.mudryakov.taverna.activityes.RegisterActivity
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.Users
 
@@ -35,6 +36,7 @@ const val CHILD_BIO = "bio"
 
 fun initFireBase() {
     AUTH = FirebaseAuth.getInstance()
+
     REF_DATABASE_ROOT = FirebaseDatabase.getInstance().reference
     USER = Users()
     CURRENT_UID = AUTH.currentUser?.uid.toString()
@@ -65,52 +67,54 @@ inline fun addUrlBase(url: String, crossinline function: () -> Unit) {
 inline fun initUser(crossinline function: () -> Unit) {
     REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
         .addListenerForSingleValueEvent(appValueEventListener {
-            USER = it.getValue(Users::class.java) ?: Users()
+                USER = it.getValue(Users::class.java) ?: Users()
             function()
         })
 }
 
 fun initContacts() {
-    if (checkPermission(READ_CONTACTS)) {
-        var arrayContacts = arrayListOf<CommonModel>()
-        val cursor = APP_ACTIVITY.contentResolver.query(
-            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-            null,
-            null,
-            null,
-            null
-        )
-        cursor?.let {
-            while (it.moveToNext()) {
-                val fullName =
-                    it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                val phone =
-                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                        .replace(Regex("[\\s,-]"), "").replace("8","+7")
-                val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
-                arrayContacts.add(newModel)
-            }
-        }
-        cursor?.close()
-        REF_DATABASE_ROOT.child(NODE_PHONES).addListenerForSingleValueEvent(appValueEventListener {
-            it.children.forEach { snapshot ->
-                arrayContacts.forEach { contact ->
-                    if (snapshot.key == contact.phoneNumber) {
-                        REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
-                            .child(CURRENT_UID)
-                            .child(snapshot.value.toString())
-                            .child(CHILD_ID).setValue(snapshot.value.toString())
-                        REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
-                            .child(CURRENT_UID)
-                            .child(snapshot.value.toString())
-                            .child(CHILD_PHONE).setValue(snapshot.key)
+   if (AUTH.currentUser!=null) {
+       if (checkPermission(READ_CONTACTS)) {
+           var arrayContacts = arrayListOf<CommonModel>()
+           val cursor = APP_ACTIVITY.contentResolver.query(
+               ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+               null,
+               null,
+               null,
+               null
+           )
+           cursor?.let {
+               while (it.moveToNext()) {
+                   val fullName =
+                       it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                   val phone =
+                       it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                           .replace(Regex("[\\s,-]"), "").replace("8", "+7")
+                   val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
+                   arrayContacts.add(newModel)
+               }
+           }
+           cursor?.close()
+           REF_DATABASE_ROOT.child(NODE_PHONES)
+               .addListenerForSingleValueEvent(appValueEventListener {
+                   it.children.forEach { snapshot ->
+                       arrayContacts.forEach { contact ->
+                           if (snapshot.key == contact.phoneNumber) {
+                               REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                                   .child(CURRENT_UID)
+                                   .child(snapshot.value.toString())
+                                   .child(CHILD_ID).setValue(snapshot.value.toString())
+                               REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                                   .child(CURRENT_UID)
+                                   .child(snapshot.value.toString())
+                                   .child(CHILD_FULL_NAME).setValue(contact.fullName)
 
-                    }
+                           }
 
-                }
+                       }
 
-            }
-        })
-    }
-
+                   }
+               })
+       }
+   }
 }
