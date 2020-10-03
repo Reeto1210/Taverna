@@ -13,9 +13,12 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.models.CommonModel
+import com.mudryakov.taverna.models.MessageModel
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun AppCompatActivity.replaceActivity(newAct: Activity) {
     val i = Intent(this, newAct::class.java)
@@ -74,6 +77,8 @@ fun setFullnameUi(): String {
 }
 
 fun DataSnapshot.getCommonModel() = this.getValue(CommonModel::class.java) ?: CommonModel()
+fun DataSnapshot.getCommonMessage() = this.getValue(MessageModel::class.java) ?: MessageModel()
+
 
 
 fun greateDialogForConfirm(text: String, function: () -> Unit) {
@@ -83,4 +88,10 @@ fun greateDialogForConfirm(text: String, function: () -> Unit) {
         .setPositiveButton("да") { dialog, wich -> function() }
         .setNegativeButton("Нет") { dialog, wich -> }
         .show()
+}
+fun String.transformTime(): String {
+val date = Date(this.toLong())
+    val timeFormat = SimpleDateFormat("HH:mm",Locale.getDefault())
+    return timeFormat.format(date)
+
 }

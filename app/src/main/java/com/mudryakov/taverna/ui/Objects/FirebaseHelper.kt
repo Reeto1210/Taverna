@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mudryakov.taverna.activityes.RegisterActivity
@@ -19,12 +20,19 @@ lateinit var REF_STORAGE_ROOT: StorageReference
 lateinit var USER: Users
 lateinit var CURRENT_UID: String
 
+
+const val TYPE_TEXT = "text"
 const val NODE_PHONES_CONTACTS = "phone_contacts"
 const val NODE_PHONES = "phones"
 const val NODE_PROFILE_IMG = "profileImg"
 const val NODE_USERNAMES = "usernames"
 const val NODE_USERS = "users"
+const val NODE_MESSAGES = "messages"
 
+const val CHILD_TIME = "time"
+const val CHILD_TYPE = "type"
+const val CHILD_FROM = "from"
+const val CHILD_TEXT = "text"
 const val CHILD_ID = "id"
 const val CHILD_PHONE = "phoneNumber"
 const val CHILD_USERNAME = "username"
@@ -117,4 +125,23 @@ fun initContacts() {
                })
        }
    }
+}
+fun sendMessage(text: String, friendId: String, type: String, function: () -> Unit) {
+    val refUser = "/$NODE_MESSAGES/$CURRENT_UID/$friendId"
+    val refFriend = "/$NODE_MESSAGES/$friendId/$CURRENT_UID"
+    val key = REF_DATABASE_ROOT.child(refUser).push().key
+
+    val addMessage = HashMap<String, Any>()
+    addMessage[CHILD_TEXT] = text
+    addMessage[CHILD_FROM] = CURRENT_UID
+    addMessage[CHILD_TYPE] = type
+    addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
+
+    val hashForUpdate = HashMap<String, Any>()
+    hashForUpdate["$refUser/$key"] = addMessage
+    hashForUpdate["$refFriend/$key"] = addMessage
+
+    REF_DATABASE_ROOT.updateChildren(hashForUpdate)
+        .addOnSuccessListener { function() }
+        .addOnFailureListener { showToast(it.message.toString()) }
 }
