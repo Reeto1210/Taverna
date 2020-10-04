@@ -1,3 +1,5 @@
+package com.mudryakov.taverna.ui.Fragmets.contacts
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -5,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.snapshot.Node
 import com.mudryakov.taverna.R
+import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
-import com.mudryakov.taverna.ui.Objects.*
+import com.mudryakov.taverna.ui.Fragmets.SingleChat.SingleChatFragment
+import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.contacts_view.view.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
 
@@ -62,7 +64,7 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
                     holder.name.text = contact.fullName
                     holder.status.text = contact.status
                     holder.image.downloadAndSetImage(contact.photoUrl)
-                    holder.itemView.setOnClickListener { APP_ACTIVITY.changeFragment(SingleChatFragment(contact)) }
+                    holder.itemView.setOnClickListener { changeFragment(SingleChatFragment(contact)) }
                 }
                 myUsers.addValueEventListener(mRefUserListener)
                 listenersHashMap[myUsers] = mRefUserListener

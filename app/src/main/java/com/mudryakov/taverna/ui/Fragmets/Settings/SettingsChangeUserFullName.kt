@@ -1,7 +1,8 @@
 import com.mudryakov.taverna.R
-import com.mudryakov.taverna.activityes.MainActivity
+import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.ui.Fragmets.Settings.settingsBaseFragment
-import com.mudryakov.taverna.ui.Objects.*
+import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.fragment_settings_change_full_name.*
 
 class SettingsChangeUserFullName : settingsBaseFragment(R.layout.fragment_settings_change_full_name) {

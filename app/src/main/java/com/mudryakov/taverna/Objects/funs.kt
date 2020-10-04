@@ -1,50 +1,38 @@
-package com.mudryakov.taverna.ui.Objects
+package com.mudryakov.taverna.Objects
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.mudryakov.taverna.R
+import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
+import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.MessageModel
 import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.fragment_settings.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun AppCompatActivity.replaceActivity(newAct: Activity) {
-    val i = Intent(this, newAct::class.java)
-    startActivity(i)
-    this.finish()
-}
 
 fun showToast(mesg: String) {
     Toast.makeText(APP_ACTIVITY, mesg, Toast.LENGTH_LONG).show()
 }
 
-fun Fragment.changeFragment(newFragment: Fragment) {
-    fragmentManager?.beginTransaction()
-        ?.replace(R.id.RegisterContainer, newFragment)
-        ?.addToBackStack(null)
-        ?.commit()
-}
 
-fun AppCompatActivity.changeFragment(newFragment: Fragment, addStack: Boolean = true) {
+
+fun changeFragment(newFragment: Fragment, addStack: Boolean = true) {
     if (addStack) {
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(R.id.dataConteiner, newFragment)
             ?.addToBackStack(null)
             ?.commit()
     } else {
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(R.id.dataConteiner, newFragment)
             ?.commit()
     }
@@ -77,6 +65,7 @@ fun setFullnameUi(): String {
 }
 
 fun DataSnapshot.getCommonModel() = this.getValue(CommonModel::class.java) ?: CommonModel()
+
 fun DataSnapshot.getCommonMessage() = this.getValue(MessageModel::class.java) ?: MessageModel()
 
 
@@ -90,8 +79,13 @@ fun greateDialogForConfirm(text: String, function: () -> Unit) {
         .show()
 }
 fun String.transformTime(): String {
-val date = Date(this.toLong())
+    val date = Date(this.toLong())
     val timeFormat = SimpleDateFormat("HH:mm",Locale.getDefault())
     return timeFormat.format(date)
 
+}
+ fun RestartActivity() {
+    val intent = Intent(APP_ACTIVITY, MainActivity::class.java)
+     APP_ACTIVITY.startActivity(intent)
+     APP_ACTIVITY.finish()
 }

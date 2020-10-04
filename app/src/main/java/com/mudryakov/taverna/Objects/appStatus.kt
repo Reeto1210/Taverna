@@ -1,4 +1,6 @@
-package com.mudryakov.taverna.ui.Objects
+package com.mudryakov.taverna.Objects
+
+import com.mudryakov.taverna.appDatabaseHelper.*
 
 enum class appStatus(val state:String) {
     ONLINE("в сети"),

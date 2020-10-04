@@ -1,6 +1,7 @@
 import com.mudryakov.taverna.R
+import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.ui.Fragmets.Settings.settingsBaseFragment
-import com.mudryakov.taverna.ui.Objects.*
+import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.fragment_change_username.*
 import java.util.*
 

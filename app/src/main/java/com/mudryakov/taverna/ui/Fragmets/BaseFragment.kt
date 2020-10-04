@@ -5,11 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.mudryakov.taverna.R
-import com.mudryakov.taverna.activityes.MainActivity
-import com.mudryakov.taverna.databinding.FragmentChatBinding
-import com.mudryakov.taverna.ui.Objects.APP_ACTIVITY
-import com.mudryakov.taverna.ui.Objects.hideKeyBoard
+import com.mudryakov.taverna.MainActivity
 
 open class BaseFragment(private val layout: Int) : Fragment() {
 
@@ -23,10 +19,6 @@ open class BaseFragment(private val layout: Int) : Fragment() {
         (activity as MainActivity).myDrawer.disableDrawer()
     }
 
-    override fun onStop() {
-        super.onStop()
-        (activity as MainActivity).myDrawer.enableDrawer()
-        hideKeyBoard()
-    }
+
 
 }

@@ -1,12 +1,10 @@
-package com.mudryakov.taverna.ui.Objects
+package com.mudryakov.taverna.Objects
 
-import ContactsFragment
+import com.mudryakov.taverna.ui.Fragmets.contacts.ContactsFragment
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
@@ -19,12 +17,13 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.mudryakov.taverna.R
+import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
+import com.mudryakov.taverna.appDatabaseHelper.TOOLBAR
+import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.ui.Fragmets.Settings.SettingsFragment
-import com.mudryakov.taverna.ui.Fragmets.SingleChatFragment
-import com.squareup.picasso.Picasso
 
 
-class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
+class AppDrawer{
     private lateinit var currentProfile: ProfileDrawerItem
     private lateinit var mDrawer: Drawer
     private lateinit var mHeader: AccountHeader
@@ -37,28 +36,28 @@ class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
     }
 
     fun enableDrawer() {
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        APP_ACTIVITY.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         mDrawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = true
         appDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        Toolbar.setNavigationOnClickListener{
+        TOOLBAR.setNavigationOnClickListener{
             mDrawer.openDrawer()
         }
     }
 
     fun disableDrawer() {
         mDrawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = false
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        APP_ACTIVITY.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         appDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        Toolbar.setNavigationOnClickListener{
-            activity.supportFragmentManager.popBackStack()
+        TOOLBAR.setNavigationOnClickListener{
+            APP_ACTIVITY.supportFragmentManager.popBackStack()
         }
     }
 
     private fun createDrawer() {
 
         mDrawer = DrawerBuilder()
-            .withActivity(activity)
-            .withToolbar(Toolbar)
+            .withActivity(APP_ACTIVITY)
+            .withToolbar(TOOLBAR)
             .withActionBarDrawerToggle(true)
             .withSelectedItem(-1)
             .withAccountHeader(mHeader)
@@ -134,8 +133,8 @@ class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
 
     private fun onClickDrawer(position: Int) {
         when (position) {
-            7 -> activity.changeFragment(SettingsFragment())
-            4 -> activity.changeFragment(ContactsFragment())
+            7 ->changeFragment(SettingsFragment())
+            4 -> changeFragment(ContactsFragment())
                 }
     }
 
@@ -146,7 +145,7 @@ class AppDrawer(var activity: AppCompatActivity, private val Toolbar: Toolbar) {
             .withIcon(USER.photoUrl)
             .withIdentifier(200)
         mHeader = AccountHeaderBuilder()
-            .withActivity(activity)
+            .withActivity(APP_ACTIVITY)
             .withHeaderBackground(R.drawable.header)
             .addProfiles(
                 currentProfile

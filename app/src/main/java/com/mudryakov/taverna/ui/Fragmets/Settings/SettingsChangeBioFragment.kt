@@ -1,7 +1,8 @@
 package com.mudryakov.taverna.ui.Fragmets.Settings
 
 import com.mudryakov.taverna.R
-import com.mudryakov.taverna.ui.Objects.*
+import com.mudryakov.taverna.appDatabaseHelper.*
+import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.fragment_settings_change_bio.*
 
 

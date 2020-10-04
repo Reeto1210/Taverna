@@ -3,19 +3,14 @@ package com.mudryakov.taverna.ui.Fragmets.Settings
 import ChangeUserNameFragment
 import SettingsChangeUserFullName
 import android.app.Activity.RESULT_OK
-import android.content.ClipData
 import android.content.Intent
-import android.net.Uri
 import android.view.*
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.storage.StorageReference
 import com.mudryakov.taverna.R
-import com.mudryakov.taverna.activityes.MainActivity
-import com.mudryakov.taverna.activityes.RegisterActivity
+import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.appDatabaseHelper.*
+
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.ui.Objects.*
-import com.squareup.picasso.Picasso
+import com.mudryakov.taverna.Objects.*
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -32,12 +27,12 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
                 addInfoUser()
         btnSettingsChangeUsername.setOnClickListener {
-            APP_ACTIVITY.changeFragment(
+           changeFragment(
                 ChangeUserNameFragment()
             )
         }
         btnSettingsChangeAboutMe.setOnClickListener {
-            APP_ACTIVITY.changeFragment(
+            changeFragment(
                 SettingsChangeBioFragment()
             )
         }
@@ -70,13 +65,14 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
                greateDialogForConfirm("Вы действительно хотите выйти?"){
                    appStatus.changeState(appStatus.OFFLINE)
                    AUTH.signOut()
-                   (APP_ACTIVITY).replaceActivity(RegisterActivity())
-                   APP_ACTIVITY.finish()}
+                   RestartActivity()
+
+                   }
 
 
             }
             R.id.changeName ->
-                APP_ACTIVITY.changeFragment(SettingsChangeUserFullName())
+                changeFragment(SettingsChangeUserFullName())
         }
         return true
     }

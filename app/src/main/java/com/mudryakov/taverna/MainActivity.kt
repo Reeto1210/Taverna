@@ -1,21 +1,14 @@
-package com.mudryakov.taverna.activityes
+package com.mudryakov.taverna
 
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import com.mudryakov.taverna.R
+import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.databinding.ActivityMainBinding
-import com.mudryakov.taverna.models.Users
-import com.mudryakov.taverna.ui.Fragmets.ChatFragment
-import com.mudryakov.taverna.ui.Objects.*
-import com.squareup.picasso.Picasso
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageActivity
-import kotlinx.android.synthetic.main.fragment_settings.*
+import com.mudryakov.taverna.ui.Fragmets.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.Register.EnterPhoneFragment
+import com.mudryakov.taverna.Objects.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +16,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     lateinit var myDrawer: AppDrawer
-    private lateinit var mToolbar: androidx.appcompat.widget.Toolbar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,21 +40,19 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initFields() {
-        mToolbar = mBinding.toolbarMain!!
-        myDrawer = AppDrawer(this, mToolbar)
+        TOOLBAR = mBinding.toolbarMain!!
+        myDrawer = AppDrawer()
 
     }
 
 
     fun initFunc() {
-        if (AUTH.currentUser == null)
-            replaceActivity(RegisterActivity())
-        else {
-            setSupportActionBar(mToolbar)
-            changeFragment(ChatFragment(), false)
-            myDrawer.Create()
 
-        }
+            setSupportActionBar(TOOLBAR)
+            changeFragment(MainFragment(), false)
+           if (AUTH.currentUser == null)
+            changeFragment(EnterPhoneFragment(),false)
+        myDrawer.Create()
     }
 
 

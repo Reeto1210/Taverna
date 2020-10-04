@@ -1,10 +1,11 @@
-package com.mudryakov.taverna.ui.Objects
+package com.mudryakov.taverna.Objects
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
 
 const val READ_CONTACTS = Manifest.permission.READ_CONTACTS
 const val REQUEST_CODE = 200

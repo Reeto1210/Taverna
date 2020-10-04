@@ -1,4 +1,4 @@
-package com.mudryakov.taverna.ui.Objects
+package com.mudryakov.taverna.appDatabaseHelper
 
 import android.net.Uri
 import android.provider.ContactsContract
@@ -9,10 +9,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.mudryakov.taverna.activityes.RegisterActivity
+
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.Users
+import com.mudryakov.taverna.Objects.READ_CONTACTS
+import com.mudryakov.taverna.Objects.appValueEventListener
+import com.mudryakov.taverna.Objects.checkPermission
+import com.mudryakov.taverna.Objects.showToast
 
+lateinit var TOOLBAR: androidx.appcompat.widget.Toolbar
 lateinit var APP_ACTIVITY: AppCompatActivity
 lateinit var AUTH: FirebaseAuth
 lateinit var REF_DATABASE_ROOT: DatabaseReference
