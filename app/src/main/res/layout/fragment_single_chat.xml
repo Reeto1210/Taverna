@@ -12,13 +12,14 @@
         android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
         <EditText
             android:id="@+id/SingleChatMessageLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
             android:hint="Сообщение"
             android:padding="10dp"
             android:textColor="@color/md_black_1000"
@@ -29,31 +30,30 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:clickable="true"
             android:id="@+id/btnSendSingleMessage"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginEnd="16dp"
+            android:background="@drawable/ripple_for_chat_button"
+            android:clickable="true"
+            android:focusable="true"
             android:foregroundGravity="center_vertical"
             android:src="@drawable/ic_baseline_send"
-           android:background="@drawable/ripple_for_chat_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:focusable="true" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+android:id="@+id/SingleChatRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/backForSIngleChat"
         app:layout_constraintBottom_toTopOf="@id/EnterMessgLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/SingleChatRecycle"
@@ -63,6 +63,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/chat_item_recycle" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

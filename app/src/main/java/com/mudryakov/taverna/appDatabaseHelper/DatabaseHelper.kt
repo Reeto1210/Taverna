@@ -141,7 +141,7 @@ fun sendMessage(text: String, friendId: String, type: String, function: () -> Un
     addMessage[CHILD_FROM] = CURRENT_UID
     addMessage[CHILD_TYPE] = type
     addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
-
+addMessage[CHILD_ID] = key.toString()
     val hashForUpdate = HashMap<String, Any>()
     hashForUpdate["$refUser/$key"] = addMessage
     hashForUpdate["$refFriend/$key"] = addMessage

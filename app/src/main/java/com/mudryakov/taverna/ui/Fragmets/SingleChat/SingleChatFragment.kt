@@ -1,13 +1,14 @@
 package com.mudryakov.taverna.ui.Fragmets.SingleChat
 
 import android.view.View
-import androidx.recyclerview.widget.DiffUtil
+import android.widget.AbsListView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.database.DatabaseReference
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
-import com.mudryakov.taverna.models.MessageModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.mudryakov.taverna.ui.Fragmets.MainFragment
 import com.mudryakov.taverna.Objects.*
@@ -29,29 +30,74 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var recyclerView: RecyclerView
     lateinit var mRef: DatabaseReference
     lateinit var myListener: appChildEventValueListener
-lateinit var message:MessageModel
-    var list = mutableListOf<MessageModel>()
+    lateinit var chatAddMessageListener: appChildEventValueListener
+    lateinit var mLayoutManager: LinearLayoutManager
+    lateinit var mRefreshLayout: SwipeRefreshLayout
 
+    var mSmooth = true
+    var mIsScrolling = false
+    var count = 10
 
     override fun onResume() {
         super.onResume()
         initFriendToolbar()
+
         initRecycle()
-
-
     }
 
     private fun initRecycle() {
+        mRefreshLayout = SingleChatRefreshLayout
         recyclerView = SingleChatRecycle
+        mLayoutManager = LinearLayoutManager(this.context)
+        recyclerView.layoutManager = mLayoutManager
         mRef = REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(model.id)
         mAdapter = SingleChatAdapter()
-        myListener = appChildEventValueListener {
-            mAdapter.addItem(it.getCommonMessage() )
 
-            recyclerView.smoothScrollToPosition(mAdapter.itemCount)
-        }
-        mRef.addChildEventListener(myListener)
         recyclerView.adapter = mAdapter
+
+        chatAddMessageListener = appChildEventValueListener {
+            mAdapter.addItemToBot(it.getCommonMessage())
+            if (mSmooth) recyclerView.smoothScrollToPosition(mAdapter.itemCount)
+        }
+        myListener = appChildEventValueListener {
+            mAdapter.addItemToTop(it.getCommonMessage()){mRefreshLayout.isRefreshing = false}
+        }
+
+        mRef.limitToLast(count).addChildEventListener(chatAddMessageListener)
+        mRefreshLayout.setOnRefreshListener {
+            updateAdapter()
+        }
+
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    mIsScrolling = true
+                }
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING)
+                    mIsScrolling = true
+                count += 20
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (mIsScrolling && dy < 0 && mLayoutManager.findFirstVisibleItemPosition() <= 5) {
+                    updateAdapter()     //<---- если был скролл вверх
+                }
+                mSmooth = mIsScrolling && mLayoutManager.findLastVisibleItemPosition() == mAdapter.itemCount - 1
+            }
+        })
+        }
+
+    private fun updateAdapter() {
+
+        mIsScrolling = false
+        mSmooth = false
+        count += 10
+        mRef.removeEventListener(myListener)
+        mRef.limitToLast(count).addChildEventListener(myListener)
 
     }
 
@@ -62,6 +108,7 @@ lateinit var message:MessageModel
         TOOLBAR.setNavigationOnClickListener { APP_ACTIVITY.supportFragmentManager.popBackStack() }
         refForToolbarUser.removeEventListener(toolbarListener)
         mRef.removeEventListener(myListener)
+        mRef.removeEventListener(chatAddMessageListener)
     }
 
 
@@ -72,7 +119,7 @@ lateinit var message:MessageModel
         TOOLBAR.setNavigationOnClickListener { changeFragment(MainFragment()) }
         refForToolbarUser = REF_DATABASE_ROOT.child(NODE_USERS).child(model.id)
         APP_ACTIVITY.title = ""
-        toolbarListener = appValueEventListener{
+        toolbarListener = appValueEventListener {
             friendUser = it.getCommonModel()
             if (friendUser.fullName.isEmpty())
                 mToolbarInfo.singleChatTVname.text = model.fullName
@@ -85,6 +132,8 @@ lateinit var message:MessageModel
 
         refForToolbarUser.addValueEventListener(toolbarListener)
         btnSendSingleMessage.setOnClickListener {
+
+            mSmooth = true
             val textMessage = SingleChatMessageLayout.text.toString()
             if (textMessage.isNotEmpty())
                 sendMessage(textMessage, model.id, TYPE_TEXT) {
@@ -92,4 +141,5 @@ lateinit var message:MessageModel
                 } else showToast("Введите сообщение")
         }
     }
+
 }

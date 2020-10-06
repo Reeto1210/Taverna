@@ -56,16 +56,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         appStatus.changeState(appStatus.OFFLINE)
     }
 
-    override fun onStart() {
-        super.onStart()
-        appStatus.changeState(appStatus.ONLINE)
 
-    }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -76,6 +72,10 @@ class MainActivity : AppCompatActivity() {
     }
     }
 
+    override fun onResume() {
+        super.onResume()
+        appStatus.changeState(appStatus.ONLINE)
+    }
 
 
 }
