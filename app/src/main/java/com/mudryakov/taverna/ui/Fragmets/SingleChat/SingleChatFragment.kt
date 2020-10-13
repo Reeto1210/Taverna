@@ -85,7 +85,7 @@ lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
 keyboardVisibilityEventListener = object: KeyboardVisibilityEventListener{
     override fun onVisibilityChanged(isOpen: Boolean) {
 
-        if (isOpen){  // решить тут трабл
+        if (isOpen){  // решить тут трабл1488
 
             mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
         }
