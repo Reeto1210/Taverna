@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             initFunc()
         }
          mBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
+         setContentView(mBinding.root)
 
 
     }
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     override fun onPause() {
         super.onPause()
         appStatus.changeState(appStatus.OFFLINE)
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         appStatus.changeState(appStatus.ONLINE)
+
     }
 
 

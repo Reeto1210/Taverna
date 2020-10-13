@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "com.mikepenz:materialdrawer:7.0.0"
     implementation fileTree(dir: 'libs', include: ['*.jar'])

@@ -26,6 +26,8 @@ lateinit var USER: Users
 lateinit var CURRENT_UID: String
 
 
+const val NODE_IMAGES = "images"
+const val TYPE_IMAGE = "image"
 const val TYPE_TEXT = "text"
 const val NODE_PHONES_CONTACTS = "phone_contacts"
 const val NODE_PHONES = "phones"
@@ -45,6 +47,7 @@ const val CHILD_STATUS = "status"
 const val CHILD_FULL_NAME = "fullName"
 const val CHILD_PHOTO_URL = "photoUrl"
 const val CHILD_BIO = "bio"
+const val CHILD_IMAGE = "imageUrl"
 
 
 fun initFireBase() {
@@ -80,58 +83,65 @@ inline fun addUrlBase(url: String, crossinline function: () -> Unit) {
 inline fun initUser(crossinline function: () -> Unit) {
     REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
         .addListenerForSingleValueEvent(appValueEventListener {
-                USER = it.getValue(Users::class.java) ?: Users()
+            USER = it.getValue(Users::class.java) ?: Users()
             function()
         })
 }
 
 fun initContacts() {
-   if (AUTH.currentUser!=null) {
-       if (checkPermission(READ_CONTACTS)) {
-           var arrayContacts = arrayListOf<CommonModel>()
-           val cursor = APP_ACTIVITY.contentResolver.query(
-               ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-               null,
-               null,
-               null,
-               null
-           )
-           cursor?.let {
-               while (it.moveToNext()) {
-                   val fullName =
-                       it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                   val phone =
-                       it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                           .replace(Regex("[\\s,-]"), "").replace("8", "+7")
-                   val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
-                   arrayContacts.add(newModel)
-               }
-           }
-           cursor?.close()
-           REF_DATABASE_ROOT.child(NODE_PHONES)
-               .addListenerForSingleValueEvent(appValueEventListener {
-                   it.children.forEach { snapshot ->
-                       arrayContacts.forEach { contact ->
-                           if (snapshot.key == contact.phoneNumber) {
-                               REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
-                                   .child(CURRENT_UID)
-                                   .child(snapshot.value.toString())
-                                   .child(CHILD_ID).setValue(snapshot.value.toString())
-                               REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
-                                   .child(CURRENT_UID)
-                                   .child(snapshot.value.toString())
-                                   .child(CHILD_FULL_NAME).setValue(contact.fullName)
+    if (AUTH.currentUser != null) {
+        if (checkPermission(READ_CONTACTS)) {
+            var arrayContacts = arrayListOf<CommonModel>()
+            val cursor = APP_ACTIVITY.contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+            )
+            cursor?.let {
+                while (it.moveToNext()) {
+                    val fullName =
+                        it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                    val phone =
+                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                            .replace(Regex("[\\s,-]"), "").replace("8", "+7")
+                    val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
+                    arrayContacts.add(newModel)
+                }
+            }
+            cursor?.close()
+            REF_DATABASE_ROOT.child(NODE_PHONES)
+                .addListenerForSingleValueEvent(appValueEventListener {
+                    it.children.forEach { snapshot ->
+                        arrayContacts.forEach { contact ->
+                            if (snapshot.key == contact.phoneNumber) {
+                                REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                                    .child(CURRENT_UID)
+                                    .child(snapshot.value.toString())
+                                    .child(CHILD_ID).setValue(snapshot.value.toString())
+                                REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS)
+                                    .child(CURRENT_UID)
+                                    .child(snapshot.value.toString())
+                                    .child(CHILD_FULL_NAME).setValue(contact.fullName)
 
-                           }
+                            }
 
-                       }
+                        }
 
-                   }
-               })
-       }
-   }
+                    }
+                })
+        }
+    }
 }
-fun sendMessage(text: String, friendId: String, type: String, function: () -> Unit) {
+
+fun sendMessage(
+    text: String,
+    friendId: String,
+    type: String,
+    imageUrl: String = "",
+    function: () -> Unit
+) {
     val refUser = "/$NODE_MESSAGES/$CURRENT_UID/$friendId"
     val refFriend = "/$NODE_MESSAGES/$friendId/$CURRENT_UID"
     val key = REF_DATABASE_ROOT.child(refUser).push().key
@@ -141,7 +151,8 @@ fun sendMessage(text: String, friendId: String, type: String, function: () -> Un
     addMessage[CHILD_FROM] = CURRENT_UID
     addMessage[CHILD_TYPE] = type
     addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
-addMessage[CHILD_ID] = key.toString()
+    addMessage[CHILD_IMAGE] = imageUrl
+    addMessage[CHILD_ID] = key.toString()
     val hashForUpdate = HashMap<String, Any>()
     hashForUpdate["$refUser/$key"] = addMessage
     hashForUpdate["$refFriend/$key"] = addMessage

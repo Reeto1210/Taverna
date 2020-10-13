@@ -32,7 +32,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/btnSendSingleMessage"
             android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_height="35dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/ripple_for_chat_button"
             android:clickable="true"
@@ -41,7 +41,24 @@
             android:src="@drawable/ic_baseline_send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/btnSendSingleImageAttach"
+            android:layout_width="30dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ripple_for_chat_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foregroundGravity="center_vertical"
+android:src="@drawable/ic_baseline_attach_file_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

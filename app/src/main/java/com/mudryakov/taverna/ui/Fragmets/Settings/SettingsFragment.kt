@@ -46,7 +46,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     private fun changeProfileImg() {
         CropImage.activity()
             .setAspectRatio(1, 1)
-            .setRequestedSize(600, 600)
+            .setRequestedSize(250, 250)
             .setCropShape(CropImageView.CropShape.OVAL)
             .start(APP_ACTIVITY, this)
 
@@ -77,28 +77,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         return true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && data != null
-            && resultCode == RESULT_OK
-        ) {
-            val uri = CropImage.getActivityResult(data).uri
-            val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG).child(CURRENT_UID)
-                putImageToStorage(path, uri) {
-                downloadUrl(path) {
-                    addUrlBase(it) {
-                        USER.photoUrl = it
-                        ic_settings_profile.downloadAndSetImage(it)
-                        showToast("Данные обновлены")
-                        (activity as MainActivity).myDrawer.updateProfile()
-                    }
-                }
-            }
-        }
-
-
-    }
 
 
     fun addInfoUser() {
