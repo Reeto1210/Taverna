@@ -15,7 +15,7 @@ import com.mudryakov.taverna.appDatabaseHelper.CURRENT_UID
 import com.mudryakov.taverna.Objects.transformTime
 import kotlinx.android.synthetic.main.chat_item_recycle.view.*
 
-class SingleChatAdapter() : RecyclerView.Adapter<SingleChatAdapter.messageViewHolder>() {
+class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHolder>() {
     private var messagesList = mutableListOf<MessageModel>()
 
 
@@ -39,6 +39,10 @@ class SingleChatAdapter() : RecyclerView.Adapter<SingleChatAdapter.messageViewHo
 
     override fun onBindViewHolder(holder: messageViewHolder, position: Int) {
         val message = messagesList[position]
+when(message.type){
+
+
+}
 
         if (message.from == CURRENT_UID) {
             holder.userMessageLayout.visibility = View.VISIBLE

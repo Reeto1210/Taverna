@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.Objects.hideKeyBoard
 
 open class BaseFragment(private val layout: Int) : Fragment() {
 
@@ -19,6 +20,9 @@ open class BaseFragment(private val layout: Int) : Fragment() {
         (activity as MainActivity).myDrawer.disableDrawer()
     }
 
-
+    override fun onPause() {
+        super.onPause()
+        hideKeyBoard()
+    }
 
 }

@@ -2,6 +2,7 @@ package com.mudryakov.taverna.ui.Fragmets.Settings
 
 import ChangeUserNameFragment
 import SettingsChangeUserFullName
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.*
@@ -78,8 +79,6 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     }
 
 
-
-
     fun addInfoUser() {
 
         tvUserNameSettings.text = setFullnameUi()
@@ -92,6 +91,28 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         } catch (e: Exception) {
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && data != null
+            && resultCode == RESULT_OK
+        ) {
+            val uri = CropImage.getActivityResult(data).uri
+              val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG)
+
+            putImageToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
+                downloadUrl(path) {
+                    addUrlBase(it) { //it -> URL
+                      REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_PHOTO_URL).setValue(it)
+                        USER.photoUrl = it
+                        ic_settings_profile.downloadAndSetImage(USER.photoUrl)
+
+                    }
+                }
+            }
+        }
+
+
+    }
 
 }
