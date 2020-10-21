@@ -1,6 +1,6 @@
 package com.mudryakov.taverna.models
 
-import java.sql.Timestamp
+
 
 data class MessageModel(
     val text: String = "",
@@ -8,5 +8,5 @@ data class MessageModel(
     val time: Any = "",
     val type: String = "",
     val id: String = "",
-    val imageUrl: String = ""
+    val imageUrl: String = "empty"
 )

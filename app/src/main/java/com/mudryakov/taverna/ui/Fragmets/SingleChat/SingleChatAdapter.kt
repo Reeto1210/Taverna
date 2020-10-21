@@ -3,16 +3,19 @@ package com.mudryakov.taverna.ui.Fragmets.SingleChat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mudryakov.taverna.Objects.DiffUtillCallback
-import com.mudryakov.taverna.Objects.showToast
-import com.mudryakov.taverna.R
-import com.mudryakov.taverna.models.MessageModel
-import com.mudryakov.taverna.appDatabaseHelper.CURRENT_UID
+import com.mudryakov.taverna.Objects.downloadAndSetImage
+import com.mudryakov.taverna.Objects.invisible
 import com.mudryakov.taverna.Objects.transformTime
+import com.mudryakov.taverna.Objects.visible
+import com.mudryakov.taverna.R
+import com.mudryakov.taverna.appDatabaseHelper.CURRENT_UID
+import com.mudryakov.taverna.appDatabaseHelper.TYPE_IMAGE
+import com.mudryakov.taverna.appDatabaseHelper.TYPE_TEXT
+import com.mudryakov.taverna.models.MessageModel
 import kotlinx.android.synthetic.main.chat_item_recycle.view.*
 
 class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHolder>() {
@@ -27,7 +30,17 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
 
         val friendMessageText: TextView = view.SingleChatEtFriendMessage
         val friendMessageTime: TextView = view.SingleChatEtFriendMessageTime
-        val friendMessageLayout: ConstraintLayout = view.SingleChatFriendLayout
+        val friendMessageLayout: ConstraintLayout = view.SingleChatFriendLayoutTextMessage
+
+        val userImageMessageLayout: ConstraintLayout = view.UserImageMessageLayout
+        val userImageMessageTime: TextView = view.UserMessageImageTime
+        val UserMessageImage: ImageView = view.UserMessageImage
+
+
+        val FriendMessageImageLayout: ConstraintLayout = view.friendImageMessageLayout
+        val friendImageMessageTime: TextView = view.FriendMessageImageTime
+        val FriendMessageImage: ImageView = view.FriendMessageImage
+
 
     }
 
@@ -39,22 +52,38 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
 
     override fun onBindViewHolder(holder: messageViewHolder, position: Int) {
         val message = messagesList[position]
-when(message.type){
 
+        holder.userMessageLayout.invisible()
+        holder.friendMessageLayout.invisible()
+        holder.userImageMessageLayout.invisible()
+        holder.FriendMessageImageLayout.invisible()
 
-}
-
-        if (message.from == CURRENT_UID) {
-            holder.userMessageLayout.visibility = View.VISIBLE
-            holder.friendMessageLayout.visibility = View.GONE
-            holder.userMessageText.text = message.text
-            holder.userMessageTime.text = message.time.toString().transformTime()
-        } else {
-            holder.userMessageLayout.visibility = View.GONE
-            holder.friendMessageLayout.visibility = View.VISIBLE
-            holder.friendMessageText.text = message.text
-            holder.friendMessageTime.text = message.time.toString().transformTime()
+        if (message.from == CURRENT_UID)
+            when (message.type) {
+                TYPE_TEXT -> {
+                    holder.userMessageLayout.visible()
+                    holder.userMessageText.text = message.text
+                    holder.userMessageTime.text = message.time.toString().transformTime()
+                }
+                TYPE_IMAGE -> {
+                    holder.userImageMessageLayout.visible()
+                    holder.userImageMessageTime.text = message.time.toString().transformTime()
+                    holder.UserMessageImage.downloadAndSetImage(message.imageUrl)
+                }
+            }
+        else when (message.type) {
+            TYPE_TEXT -> {
+                holder.friendMessageLayout.visible()
+                holder.friendMessageText.text = message.text
+                holder.friendMessageTime.text = message.time.toString().transformTime()
+            }
+            TYPE_IMAGE -> {
+                holder.FriendMessageImageLayout.visible()
+                holder.friendImageMessageTime.text = message.time.toString().transformTime()
+                holder.FriendMessageImage.downloadAndSetImage(message.imageUrl)
+            }
         }
+
 
     }
 
@@ -65,19 +94,21 @@ when(message.type){
 
     fun addItemToBot(item: MessageModel) {
         if (!messagesList.any { it.id == item.id }) {
-           messagesList.sortBy { it.time.toString() }
+            messagesList.sortBy { it.time.toString() }
             messagesList.add(item)
             notifyItemInserted(messagesList.size)
 
         }
     }
-        fun addItemToTop (item: MessageModel){
-            if (!messagesList.any { it.id == item.id })
-            {messagesList.add(item)
-                messagesList.sortBy { it.time.toString() }
-                notifyItemInserted(0)}
 
+    fun addItemToTop(item: MessageModel) {
+        if (!messagesList.any { it.id == item.id }) {
+            messagesList.add(item)
+            messagesList.sortBy { it.time.toString() }
+            notifyItemInserted(0)
         }
+
+    }
 
 
 }

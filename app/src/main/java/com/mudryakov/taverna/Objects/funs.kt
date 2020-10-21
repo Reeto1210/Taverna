@@ -2,6 +2,9 @@ package com.mudryakov.taverna.Objects
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
@@ -39,10 +42,11 @@ fun changeFragment(newFragment: Fragment, addStack: Boolean = true) {
 }
 
 fun ImageView.downloadAndSetImage(url: String) {
+
     Picasso.get()
         .load(url)
         .error(R.drawable.bomjara)
-        .placeholder(R.drawable.bomjara)
+        .placeholder(R.drawable.ajax_loader)
         .fit()
         .into(this)
 
@@ -89,3 +93,7 @@ fun String.transformTime(): String {
      APP_ACTIVITY.startActivity(intent)
      APP_ACTIVITY.finish()
 }
+fun View.invisible(){
+    this.visibility = View.GONE}
+fun View.visible(){
+    this.visibility = View.VISIBLE}
