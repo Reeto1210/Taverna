@@ -19,6 +19,7 @@ import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.mudryakov.taverna.ui.Fragmets.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.AppViewFactory
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -97,7 +98,7 @@ class SingleChatFragment(private val model: CommonModel) :
                         uri = Uri.fromFile(file)
                         path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
 
-                        sendCurrentMessage()
+                        sendCurrentMessage(TYPE_VOICE)
 
 
                     }
@@ -114,12 +115,12 @@ class SingleChatFragment(private val model: CommonModel) :
 
     }
 
-    private fun sendCurrentMessage() {
+    private fun sendCurrentMessage(type:String) {
         putFileToStorage(path1, uri) {
             downloadUrl(path1) {
                 addUrlBase(it) { //it -> URL
                     sendMessage(
-                        type = TYPE_VOICE,
+                        type = type,
                         friendId = model.id,
                         text = "",
                         fileUrl = it
@@ -182,11 +183,11 @@ class SingleChatFragment(private val model: CommonModel) :
         mRecyclerView.adapter = mAdapter
 
         chatAddMessageListener = appChildEventValueListener {
-            mAdapter.addItemToBot(it.getCommonMessage())
+            mAdapter.addItemToBot(AppViewFactory.getView(it.getCommonMessage()))
             if (mSmooth) mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
         }
         myListener = appChildEventValueListener {
-            mAdapter.addItemToTop(it.getCommonMessage())
+            mAdapter.addItemToTop(AppViewFactory.getView(it.getCommonMessage()))
         }
         mRef.limitToLast(count).addChildEventListener(chatAddMessageListener)
         mRefreshLayout.setOnRefreshListener {
@@ -271,7 +272,7 @@ class SingleChatFragment(private val model: CommonModel) :
             uri = CropImage.getActivityResult(data).uri
             path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
 
-            sendCurrentMessage()
+            sendCurrentMessage(TYPE_IMAGE)
 
         }
 

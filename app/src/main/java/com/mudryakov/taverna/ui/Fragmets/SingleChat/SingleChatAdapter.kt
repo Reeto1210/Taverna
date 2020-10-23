@@ -1,107 +1,91 @@
 package com.mudryakov.taverna.ui.Fragmets.SingleChat
 
-import android.view.LayoutInflater
-import android.view.View
+import android.util.Log
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mudryakov.taverna.Objects.downloadAndSetImage
 import com.mudryakov.taverna.Objects.invisible
 import com.mudryakov.taverna.Objects.transformTime
 import com.mudryakov.taverna.Objects.visible
-import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.CURRENT_UID
-import com.mudryakov.taverna.appDatabaseHelper.TYPE_IMAGE
-import com.mudryakov.taverna.appDatabaseHelper.TYPE_TEXT
-import com.mudryakov.taverna.models.MessageModel
-import kotlinx.android.synthetic.main.chat_item_recycle.view.*
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.View_holders.AppHolderFactory
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.View_holders.HolderImageMessage
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.View_holders.HolderTextMessage
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.MessageView
 
-class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHolder>() {
-    private var messagesList = mutableListOf<MessageModel>()
-
-
-    class messageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        var userMessageText: TextView = view.SingleChatEtUserMessage
-        val userMessageTime: TextView = view.SingleChatEtUserMessageTime
-        val userMessageLayout: ConstraintLayout = view.SingleChatUserLayout
-
-        val friendMessageText: TextView = view.SingleChatEtFriendMessage
-        val friendMessageTime: TextView = view.SingleChatEtFriendMessageTime
-        val friendMessageLayout: ConstraintLayout = view.SingleChatFriendLayoutTextMessage
-
-        val userImageMessageLayout: ConstraintLayout = view.UserImageMessageLayout
-        val userImageMessageTime: TextView = view.UserMessageImageTime
-        val UserMessageImage: ImageView = view.UserMessageImage
+class SingleChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    lateinit var message: MessageView
+    private var messagesList = mutableListOf<MessageView>()
 
 
-        val FriendMessageImageLayout: ConstraintLayout = view.friendImageMessageLayout
-        val friendImageMessageTime: TextView = view.FriendMessageImageTime
-        val FriendMessageImage: ImageView = view.FriendMessageImage
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
+        return AppHolderFactory.getHolder(parent, viewType)
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        when (holder){
+            is HolderTextMessage -> drawMessageText(holder)
+            is HolderImageMessage -> drawMessageImage(holder)
+
+        }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): messageViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.chat_item_recycle, parent, false)
-        return messageViewHolder(itemView)
+    override fun getItemViewType(position: Int): Int {
+        message = messagesList[position]
+Log.d("test", message.getTypeView().toString())
+        return message.getTypeView()
+
     }
 
-    override fun onBindViewHolder(holder: messageViewHolder, position: Int) {
-        val message = messagesList[position]
-
-        holder.userMessageLayout.invisible()
-        holder.friendMessageLayout.invisible()
+    private fun drawMessageImage(holder: HolderImageMessage) {
         holder.userImageMessageLayout.invisible()
         holder.FriendMessageImageLayout.invisible()
+        if (message.from == CURRENT_UID) {
+            holder.userImageMessageLayout.visible()
+            holder.userImageMessageTime.text = message.time.transformTime()
+            holder.UserMessageImage.downloadAndSetImage(message.fileUrl)
+        } else {
+            holder.FriendMessageImageLayout.visible()
+            holder.FriendImageMessageTime.text = message.time.transformTime()
+            holder.FriendMessageImage.downloadAndSetImage(message.fileUrl)
+        }
+    }
 
-        if (message.from == CURRENT_UID)
-            when (message.type) {
-                TYPE_TEXT -> {
-                    holder.userMessageLayout.visible()
-                    holder.userMessageText.text = message.text
-                    holder.userMessageTime.text = message.time.toString().transformTime()
-                }
-                else-> {
-                    holder.userImageMessageLayout.visible()
-                    holder.userImageMessageTime.text = message.time.toString().transformTime()
-                    holder.UserMessageImage.downloadAndSetImage(message.fileUrl)
-                }
-            }
-        else when (message.type) {
-            TYPE_TEXT -> {
-                holder.friendMessageLayout.visible()
-                holder.friendMessageText.text = message.text
-                holder.friendMessageTime.text = message.time.toString().transformTime()
-            }
-            else -> {
-                holder.FriendMessageImageLayout.visible()
-                holder.friendImageMessageTime.text = message.time.toString().transformTime()
-                holder.FriendMessageImage.downloadAndSetImage(message.fileUrl)
-            }
+    private fun drawMessageText(holder: HolderTextMessage) {
+        holder.userMessageLayout.invisible()
+        holder.friendMessageLayout.invisible()
+        if (message.from == CURRENT_UID) {
+            holder.userMessageLayout.visible()
+            holder.userMessageText.text = message.text
+            holder.userMessageTime.text = message.time.transformTime()
+        } else {
+            holder.friendMessageLayout.visible()
+            holder.friendMessageText.text = message.text
+            holder.friendMessageTime.text = message.time.transformTime()
         }
 
 
     }
+
 
     override fun getItemCount(): Int {
         return messagesList.size
     }
 
 
-    fun addItemToBot(item: MessageModel) {
+    fun addItemToBot(item: MessageView) {
         if (!messagesList.any { it.id == item.id }) {
             messagesList.add(item)
             messagesList.sortBy { it.time.toString() }
-                       notifyItemInserted(messagesList.size)
+            notifyItemInserted(messagesList.size)
 
         }
     }
 
-    fun addItemToTop(item: MessageModel) {
+    fun addItemToTop(item: MessageView) {
         if (!messagesList.any { it.id == item.id }) {
             messagesList.add(item)
             messagesList.sortBy { it.time.toString() }

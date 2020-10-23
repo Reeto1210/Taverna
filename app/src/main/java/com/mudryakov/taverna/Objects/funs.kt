@@ -17,6 +17,7 @@ import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
 import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.MessageModel
+import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.MessageView
 import com.squareup.picasso.Picasso
 import java.lang.Exception
 import java.text.SimpleDateFormat
