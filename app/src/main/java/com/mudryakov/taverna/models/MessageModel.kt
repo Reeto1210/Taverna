@@ -8,5 +8,5 @@ data class MessageModel(
     val time: Any = "",
     val type: String = "",
     val id: String = "",
-    val imageUrl: String = "empty"
+    val fileUrl: String = "empty"
 )

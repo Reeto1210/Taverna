@@ -18,6 +18,7 @@ import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.MessageModel
 import com.squareup.picasso.Picasso
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -97,3 +98,9 @@ fun View.invisible(){
     this.visibility = View.GONE}
 fun View.visible(){
     this.visibility = View.VISIBLE}
+fun catch(function:()->Unit){
+    try{
+        function()
+    }catch (e:Exception){
+        showToast(e.message.toString())}
+}

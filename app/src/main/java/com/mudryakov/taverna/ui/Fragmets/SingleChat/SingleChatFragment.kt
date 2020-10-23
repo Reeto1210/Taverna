@@ -1,25 +1,27 @@
 package com.mudryakov.taverna.ui.Fragmets.SingleChat
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AbsListView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.database.DatabaseReference
-import com.mudryakov.taverna.MainActivity
+import com.google.firebase.storage.StorageReference
+import com.mudryakov.taverna.Objects.*
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.mudryakov.taverna.ui.Fragmets.MainFragment
-import com.mudryakov.taverna.Objects.*
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_single_chat.*
 import kotlinx.android.synthetic.main.toolbar_for_chat.view.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -41,11 +43,14 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var chatAddMessageListener: appChildEventValueListener
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var mRefreshLayout: SwipeRefreshLayout
-lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
-
+    lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
+    lateinit var mMediaRecorder: AppMediaRecorder
+    lateinit var uri: Uri
+    lateinit var path1: StorageReference
     var mSmooth = true
     var mIsScrolling = false
     var count = 15
+
 
     override fun onResume() {
         super.onResume()
@@ -55,24 +60,13 @@ lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
         initMessageSent()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initMessageSent() {
 
-        SingleChatMessageLayout.addTextChangedListener(MyTextWhatcher {
-            if (SingleChatMessageLayout.text.isNotEmpty()) {
-                btnSendSingleImageAttach.visibility = View.GONE
-                btnSendSingleMessage.visibility = View.VISIBLE
-            } else {
-                btnSendSingleImageAttach.visibility = View.VISIBLE
-                btnSendSingleMessage.visibility = View.GONE
-            }
-
-        })
         btnSendSingleImageAttach.setOnClickListener {
             mSmooth = true
             attachImage()
         }
-
-
         btnSendSingleMessage.setOnClickListener {
             mSmooth = true
 
@@ -82,19 +76,87 @@ lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
             }
 
         }
-keyboardVisibilityEventListener = object: KeyboardVisibilityEventListener{
-    override fun onVisibilityChanged(isOpen: Boolean) {
+        initkeyboardListener()
 
-        if (isOpen){  // решить тут трабл1489
+        btnSendSingleVoiceMessage.setOnTouchListener { v, event ->
+            if (checkPermission(RECOR_AUDIO)) {
+                if (event.action == MotionEvent.ACTION_DOWN) {
 
-            mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
+                    btnSendSingleVoiceMessage.setColorFilter(
+                        ContextCompat.getColor(
+                            APP_ACTIVITY,
+                            R.color.colorPrimary
+                        )
+                    )
+                    val key = getMessageKey(model.id)
+                    mMediaRecorder.startRecord(key)
+                    SingleChatMessageLayout.setText("запись")
+                }
+                if (event.action == MotionEvent.ACTION_UP) {
+                    mMediaRecorder.stopRecord { file, key ->
+                        uri = Uri.fromFile(file)
+                        path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
+
+                        sendCurrentMessage()
+
+
+                    }
+                    btnSendSingleVoiceMessage.colorFilter = null
+                    mSmooth = true
+                    SingleChatMessageLayout.setText("")
+                }
+
+            }
+
+
+            true
         }
-
 
     }
 
-}
-      KeyboardVisibilityEvent.setEventListener(APP_ACTIVITY,keyboardVisibilityEventListener)
+    private fun sendCurrentMessage() {
+        putFileToStorage(path1, uri) {
+            downloadUrl(path1) {
+                addUrlBase(it) { //it -> URL
+                    sendMessage(
+                        type = TYPE_VOICE,
+                        friendId = model.id,
+                        text = "",
+                        fileUrl = it
+                    ) {}
+                }
+            }
+
+        }
+    }
+
+
+    private fun initkeyboardListener() {
+        SingleChatMessageLayout.addTextChangedListener(MyTextWhatcher {
+            if (SingleChatMessageLayout.text.isNotEmpty()) {
+                btnSendSingleImageAttach.invisible()
+                btnSendSingleMessage.visible()
+                btnSendSingleVoiceMessage.invisible()
+            } else {
+                btnSendSingleImageAttach.visible()
+                btnSendSingleMessage.invisible()
+                btnSendSingleVoiceMessage.visible()
+            }
+
+        })
+        keyboardVisibilityEventListener = object : KeyboardVisibilityEventListener {
+            override fun onVisibilityChanged(isOpen: Boolean) {
+
+                if (isOpen) {  // решить тут трабл1489
+
+                    mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
+                }
+
+
+            }
+
+        }
+        KeyboardVisibilityEvent.setEventListener(APP_ACTIVITY, keyboardVisibilityEventListener)
     }
 
     private fun attachImage() {
@@ -105,6 +167,7 @@ keyboardVisibilityEventListener = object: KeyboardVisibilityEventListener{
     }
 
     private fun initField() {
+        mMediaRecorder = AppMediaRecorder()
         mRefreshLayout = SingleChatRefreshLayout
         mRecyclerView = SingleChatRecycle
         mLayoutManager = LinearLayoutManager(this.context)
@@ -204,25 +267,19 @@ keyboardVisibilityEventListener = object: KeyboardVisibilityEventListener{
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && data != null
             && resultCode == Activity.RESULT_OK
         ) {
-            val uri = CropImage.getActivityResult(data).uri
-            val key = REF_DATABASE_ROOT.child(NODE_IMAGES).push().key
-            val path = REF_STORAGE_ROOT.child(NODE_IMAGES).child(key.toString())
+            val key = getMessageKey(model.id)
+            uri = CropImage.getActivityResult(data).uri
+            path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
 
-            putImageToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
-                downloadUrl(path) {
-                    addUrlBase(it) { //it -> URL
-                        sendMessage(
-                            type = TYPE_IMAGE,
-                            friendId = model.id,
-                            text = "",
-                            imageUrl = it
-                        ) {}
-                    }
-                }
-            }
+            sendCurrentMessage()
+
         }
 
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mMediaRecorder.releaseRecord()
+    }
 }

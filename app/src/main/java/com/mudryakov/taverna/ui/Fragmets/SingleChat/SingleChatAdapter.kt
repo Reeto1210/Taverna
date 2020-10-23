@@ -65,10 +65,10 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
                     holder.userMessageText.text = message.text
                     holder.userMessageTime.text = message.time.toString().transformTime()
                 }
-                TYPE_IMAGE -> {
+                else-> {
                     holder.userImageMessageLayout.visible()
                     holder.userImageMessageTime.text = message.time.toString().transformTime()
-                    holder.UserMessageImage.downloadAndSetImage(message.imageUrl)
+                    holder.UserMessageImage.downloadAndSetImage(message.fileUrl)
                 }
             }
         else when (message.type) {
@@ -77,10 +77,10 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
                 holder.friendMessageText.text = message.text
                 holder.friendMessageTime.text = message.time.toString().transformTime()
             }
-            TYPE_IMAGE -> {
+            else -> {
                 holder.FriendMessageImageLayout.visible()
                 holder.friendImageMessageTime.text = message.time.toString().transformTime()
-                holder.FriendMessageImage.downloadAndSetImage(message.imageUrl)
+                holder.FriendMessageImage.downloadAndSetImage(message.fileUrl)
             }
         }
 
@@ -94,9 +94,9 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
 
     fun addItemToBot(item: MessageModel) {
         if (!messagesList.any { it.id == item.id }) {
-            messagesList.sortBy { it.time.toString() }
             messagesList.add(item)
-            notifyItemInserted(messagesList.size)
+            messagesList.sortBy { it.time.toString() }
+                       notifyItemInserted(messagesList.size)
 
         }
     }
@@ -105,6 +105,7 @@ class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.messageViewHold
         if (!messagesList.any { it.id == item.id }) {
             messagesList.add(item)
             messagesList.sortBy { it.time.toString() }
+
             notifyItemInserted(0)
         }
 

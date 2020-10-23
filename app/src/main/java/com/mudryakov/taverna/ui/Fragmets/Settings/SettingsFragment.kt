@@ -2,12 +2,10 @@ package com.mudryakov.taverna.ui.Fragmets.Settings
 
 import ChangeUserNameFragment
 import SettingsChangeUserFullName
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.*
 import com.mudryakov.taverna.R
-import com.mudryakov.taverna.MainActivity
 import com.mudryakov.taverna.appDatabaseHelper.*
 
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
@@ -100,10 +98,10 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             val uri = CropImage.getActivityResult(data).uri
               val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG)
 
-            putImageToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
+            putFileToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
                 downloadUrl(path) {
                     addUrlBase(it) { //it -> URL
-                      REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_PHOTO_URL).setValue(it)
+                      REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_FILE_URL).setValue(it)
                         USER.photoUrl = it
                         ic_settings_profile.downloadAndSetImage(USER.photoUrl)
 

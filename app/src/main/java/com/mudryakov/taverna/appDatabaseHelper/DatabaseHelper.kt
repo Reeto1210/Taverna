@@ -25,10 +25,11 @@ lateinit var REF_STORAGE_ROOT: StorageReference
 lateinit var USER: Users
 lateinit var CURRENT_UID: String
 
-
-const val NODE_IMAGES = "images"
 const val TYPE_IMAGE = "image"
 const val TYPE_TEXT = "text"
+const val TYPE_VOICE = "voice"
+
+const val NODE_FILES = "files"
 const val NODE_PHONES_CONTACTS = "phone_contacts"
 const val NODE_PHONES = "phones"
 const val NODE_PROFILE_IMG = "profileImg"
@@ -45,9 +46,9 @@ const val CHILD_PHONE = "phoneNumber"
 const val CHILD_USERNAME = "username"
 const val CHILD_STATUS = "status"
 const val CHILD_FULL_NAME = "fullName"
-const val CHILD_PHOTO_URL = "photoUrl"
+const val CHILD_FILE_URL = "fileUrl"
 const val CHILD_BIO = "bio"
-const val CHILD_IMAGE = "imageUrl"
+
 
 
 fun initFireBase() {
@@ -59,7 +60,7 @@ fun initFireBase() {
     REF_STORAGE_ROOT = FirebaseStorage.getInstance().reference
 }
 
-inline fun putImageToStorage(path: StorageReference, uri: Uri, crossinline function: () -> Unit) {
+inline fun putFileToStorage(path: StorageReference, uri: Uri, crossinline function: () -> Unit) {
     path.putFile(uri)
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast("Произошла ошибка") }
@@ -74,7 +75,7 @@ inline fun downloadUrl(path: StorageReference, crossinline function: (url: Strin
 
 inline fun addUrlBase(url: String, crossinline function: () -> Unit) {
     REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
-        .child(CHILD_PHOTO_URL)
+        .child(CHILD_FILE_URL)
         .setValue(url)
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast("Произошла ошибка") }
@@ -139,7 +140,7 @@ fun sendMessage(
     text: String,
     friendId: String,
     type: String,
-    imageUrl: String = "",
+    fileUrl: String = "",
     function: () -> Unit
 ) {
     val refUser = "/$NODE_MESSAGES/$CURRENT_UID/$friendId"
@@ -151,7 +152,7 @@ fun sendMessage(
     addMessage[CHILD_FROM] = CURRENT_UID
     addMessage[CHILD_TYPE] = type
     addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
-    addMessage[CHILD_IMAGE] = imageUrl
+    addMessage[CHILD_FILE_URL] = fileUrl
     addMessage[CHILD_ID] = key.toString()
     val hashForUpdate = HashMap<String, Any>()
     hashForUpdate["$refUser/$key"] = addMessage
@@ -161,3 +162,6 @@ fun sendMessage(
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast(it.message.toString()) }
 }
+fun getMessageKey(id:String)= REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(id).push().key.toString()
+
+
