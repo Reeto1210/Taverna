@@ -163,7 +163,7 @@ class SingleChatFragment(private val model: CommonModel) :
     private fun attachImage() {
         CropImage.activity()
             .setAspectRatio(1, 1)
-            .setRequestedSize(250, 250)
+            .setRequestedSize(600, 600)
             .start(APP_ACTIVITY, this)
     }
 

@@ -13,7 +13,11 @@ class AppHolderFactory {
                 MessageView.MESSAGE_IMAGE ->{
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.chat_image_item, parent, false)
                     HolderImageMessage(view)}
-                 else ->{
+                 MessageView.MESSAGE_VOICE ->{
+                     val view = LayoutInflater.from(parent.context).inflate(R.layout.chat_voice_item, parent, false)
+                         HolderVoiceMessage(view)}
+
+                else ->{
                     val view =  LayoutInflater.from(parent.context).inflate(R.layout.chat_text_item, parent, false)
                      HolderTextMessage(view)}
             }

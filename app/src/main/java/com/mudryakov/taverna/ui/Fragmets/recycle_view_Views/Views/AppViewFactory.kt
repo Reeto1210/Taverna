@@ -2,6 +2,7 @@ package com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views
 
 import com.mudryakov.taverna.appDatabaseHelper.TYPE_IMAGE
 import com.mudryakov.taverna.appDatabaseHelper.TYPE_TEXT
+import com.mudryakov.taverna.appDatabaseHelper.TYPE_VOICE
 import com.mudryakov.taverna.models.MessageModel
 
 class AppViewFactory() {
@@ -15,6 +16,13 @@ class AppViewFactory() {
                 message.from,
                 message.fileUrl
             )
+           TYPE_VOICE -> ViewVoiceMessage(
+               message.id,
+               message.time.toString(),
+               message.text,
+               message.from,
+               message.fileUrl
+           )
             else -> ViewTextMessage(
                 message.id,
                 message.time.toString(),
