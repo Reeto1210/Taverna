@@ -105,3 +105,7 @@ fun catch(function:()->Unit){
     }catch (e:Exception){
         showToast(e.message.toString())}
 }
+fun Int.transformForTimer(format:String): String {
+    val timeFormat = SimpleDateFormat(format)
+    return timeFormat.format(this)
+}

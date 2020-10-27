@@ -10,12 +10,13 @@ class AppMediaRecorder : MediaRecorder() {
     private lateinit var mFile: File
     private lateinit var mMessageKey: String
 
-    fun startRecord(messageKey: String) = CoroutineScope(Dispatchers.IO).launch {
+    fun startRecord(messageKey: String,function:()->Unit) = CoroutineScope(Dispatchers.IO).launch {
         try{
             mMessageKey = messageKey
             createFileForRecord()
             prepareRecord()
             mMediaRecorder.start()
+            function()
         } catch(e:Exception){
             CoroutineScope(Dispatchers.Main).launch { showToast(e.message.toString())}
         }

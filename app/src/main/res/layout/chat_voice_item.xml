@@ -17,6 +17,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/UserVoiceMessageDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:text="12:30"
+            app:layout_constraintBottom_toBottomOf="@+id/btnUserMessageVoicePlay"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/md_black_1000"
+            app:layout_constraintTop_toTopOf="@+id/btnUserMessageVoicePlay" />
+
         <ImageView
             android:id="@+id/btnUserMessageVoicePlay"
             android:layout_width="40dp"
@@ -53,7 +64,8 @@
             android:text="12:00"
             android:textColor="@color/colorVoiceBackground"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -68,6 +80,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/FriendVoiceMessageDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:text="12:30"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/btnFriendUserMessageVoicePlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnFriendUserMessageVoicePlay" />
 
         <ImageView
             android:id="@+id/btnFriendUserMessageVoicePlay"

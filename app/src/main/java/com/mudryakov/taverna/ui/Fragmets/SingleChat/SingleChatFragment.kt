@@ -25,6 +25,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_single_chat.*
 import kotlinx.android.synthetic.main.toolbar_for_chat.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
@@ -48,7 +52,7 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var mMediaRecorder: AppMediaRecorder
     lateinit var uri: Uri
     lateinit var path1: StorageReference
-
+    var voiceDuration: Int = 0
     var mSmooth = true
     var mIsScrolling = false
     var count = 15
@@ -62,7 +66,7 @@ class SingleChatFragment(private val model: CommonModel) :
         initMessageSent()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n", "SimpleDateFormat")
     private fun initMessageSent() {
 
         btnSendSingleImageAttach.setOnClickListener {
@@ -71,7 +75,7 @@ class SingleChatFragment(private val model: CommonModel) :
         }
         btnSendSingleMessage.setOnClickListener {
 
-           mSmooth = true
+            mSmooth = true
             val textMessage = SingleChatMessageLayout.text.toString()
             val key = REF_DATABASE_ROOT.child("/$NODE_MESSAGES/$CURRENT_UID/${model.id}")
                 .push().key.toString()
@@ -93,8 +97,23 @@ class SingleChatFragment(private val model: CommonModel) :
                         )
                     )
                     val key = getMessageKey(model.id)
-                    mMediaRecorder.startRecord(key)
-                    SingleChatMessageLayout.setText("запись")
+                    mMediaRecorder.startRecord(key){
+                        CoroutineScope(Main).launch {
+                            var recordTime = 0
+                            while (event.action != MotionEvent.ACTION_UP) {
+                                SingleChatMessageLayout.setText(
+                                    "Идёт запись ${recordTime.transformForTimer("m:ss.S")}"
+                                )
+                                delay(100)
+                                recordTime += 100
+                            }
+                            voiceDuration = recordTime
+                        }
+
+                    }
+
+
+
                 }
                 if (event.action == MotionEvent.ACTION_UP) {
                     mMediaRecorder.stopRecord { file, key ->
@@ -126,7 +145,8 @@ class SingleChatFragment(private val model: CommonModel) :
                         friendId = model.id,
                         text = "",
                         fileUrl = it,
-                        key = key
+                        key = key,
+                        duration = (voiceDuration+1000).toString()
                     ) {}
                 }
             }
@@ -205,18 +225,12 @@ class SingleChatFragment(private val model: CommonModel) :
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
                     mIsScrolling = true
 
-                   }
+            }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-               // if (mIsScrolling && dy < 0) smoothPerm = false
-
                 if (mIsScrolling && dy < 0 && mLayoutManager.findFirstVisibleItemPosition() <= 15)
                     updateAdapter()
-
-                // mSmooth =
-                //    mIsScrolling && mLayoutManager.findLastVisibleItemPosition() == mAdapter.itemCount - 1
-                //   }
             }
         }
         )
@@ -229,11 +243,6 @@ class SingleChatFragment(private val model: CommonModel) :
         count += 30
         mRef.removeEventListener(chatAddMessageListener)
         mRef.limitToLast(count).addChildEventListener(chatAddMessageListener)
-
-        //mSmooth = true
-        // mIsScrolling = false
-
-
     }
 
 
@@ -249,7 +258,6 @@ class SingleChatFragment(private val model: CommonModel) :
     fun initFriendToolbar() {
         mToolbarInfo = APP_ACTIVITY.toolbar_main.ToolbarInfoMain
         mToolbarInfo.visibility = View.VISIBLE
-
         TOOLBAR.setNavigationOnClickListener { changeFragment(MainFragment()) }
         refForToolbarUser = REF_DATABASE_ROOT.child(NODE_USERS).child(model.id)
         APP_ACTIVITY.title = ""
@@ -259,30 +267,22 @@ class SingleChatFragment(private val model: CommonModel) :
                 mToolbarInfo.singleChatTVname.text = model.fullName
             else
                 mToolbarInfo.singleChatTVname.text = friendUser.fullName
-
             mToolbarInfo.singleChatTVStatus.text = friendUser.status
             mToolbarInfo.singleChatFriend.downloadAndSetImage(friendUser.photoUrl)
         }
-
         refForToolbarUser.addValueEventListener(toolbarListener)
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && data != null
             && resultCode == Activity.RESULT_OK
         ) {
             val key = getMessageKey(model.id)
             uri = CropImage.getActivityResult(data).uri
             path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
-
             sendCurrentMessage(TYPE_IMAGE, key)
-
         }
-
-
     }
 
     override fun onDestroy() {
@@ -290,3 +290,5 @@ class SingleChatFragment(private val model: CommonModel) :
         mMediaRecorder.releaseRecord()
     }
 }
+
+

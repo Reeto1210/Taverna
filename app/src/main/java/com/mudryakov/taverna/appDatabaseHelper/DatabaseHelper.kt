@@ -36,6 +36,7 @@ const val NODE_USERNAMES = "usernames"
 const val NODE_USERS = "users"
 const val NODE_MESSAGES = "messages"
 
+const val CHILD_DURATION = "duration"
 const val CHILD_TIME = "time"
 const val CHILD_TYPE = "type"
 const val CHILD_FROM = "from"
@@ -140,6 +141,7 @@ fun sendMessage(
     type: String,
     fileUrl: String="" ,
     key: String = "",
+    duration:String = "",
     function: () -> Unit
 
 ) {
@@ -155,6 +157,7 @@ fun sendMessage(
     addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
     addMessage[CHILD_ID] = key
     addMessage[CHILD_FILE_URL] = fileUrl
+addMessage[CHILD_DURATION] = duration
 
     val hashForUpdate = HashMap<String, Any>()
     hashForUpdate["$refUser/$key"] = addMessage
