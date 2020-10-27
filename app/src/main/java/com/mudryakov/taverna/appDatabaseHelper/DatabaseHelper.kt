@@ -9,13 +9,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-
-import com.mudryakov.taverna.models.CommonModel
-import com.mudryakov.taverna.models.Users
 import com.mudryakov.taverna.Objects.READ_CONTACTS
 import com.mudryakov.taverna.Objects.appValueEventListener
 import com.mudryakov.taverna.Objects.checkPermission
 import com.mudryakov.taverna.Objects.showToast
+import com.mudryakov.taverna.models.CommonModel
+import com.mudryakov.taverna.models.Users
 
 lateinit var TOOLBAR: androidx.appcompat.widget.Toolbar
 lateinit var APP_ACTIVITY: AppCompatActivity
@@ -48,7 +47,6 @@ const val CHILD_STATUS = "status"
 const val CHILD_FULL_NAME = "fullName"
 const val CHILD_FILE_URL = "fileUrl"
 const val CHILD_BIO = "bio"
-
 
 
 fun initFireBase() {
@@ -140,20 +138,24 @@ fun sendMessage(
     text: String,
     friendId: String,
     type: String,
-    fileUrl: String = "",
+    fileUrl: String="" ,
+    key: String = "",
     function: () -> Unit
+
 ) {
+
     val refUser = "/$NODE_MESSAGES/$CURRENT_UID/$friendId"
     val refFriend = "/$NODE_MESSAGES/$friendId/$CURRENT_UID"
-    val key = REF_DATABASE_ROOT.child(refUser).push().key
+
 
     val addMessage = HashMap<String, Any>()
     addMessage[CHILD_TEXT] = text
     addMessage[CHILD_FROM] = CURRENT_UID
     addMessage[CHILD_TYPE] = type
     addMessage[CHILD_TIME] = ServerValue.TIMESTAMP
+    addMessage[CHILD_ID] = key
     addMessage[CHILD_FILE_URL] = fileUrl
-    addMessage[CHILD_ID] = key.toString()
+
     val hashForUpdate = HashMap<String, Any>()
     hashForUpdate["$refUser/$key"] = addMessage
     hashForUpdate["$refFriend/$key"] = addMessage
@@ -162,6 +164,8 @@ fun sendMessage(
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast(it.message.toString()) }
 }
-fun getMessageKey(id:String)= REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(id).push().key.toString()
+
+fun getMessageKey(id: String) =
+    REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(id).push().key.toString()
 
 

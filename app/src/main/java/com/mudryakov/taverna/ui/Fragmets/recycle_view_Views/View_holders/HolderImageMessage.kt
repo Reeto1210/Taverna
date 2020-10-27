@@ -36,8 +36,12 @@ class HolderImageMessage(view: View) : RecyclerView.ViewHolder(view), MessageHol
             FriendMessageImage.downloadAndSetImage(view.fileUrl)
         }
     }
-}
 
+    override fun onAttached(View: MessageView) {
+
+    }
+
+}
 
 
 

@@ -21,16 +21,22 @@ class HolderTextMessage(view: View):RecyclerView.ViewHolder(view), MessageHolder
     val friendMessageTime: TextView = view.SingleChatEtFriendMessageTime
     val friendMessageLayout: ConstraintLayout = view.SingleChatFriendLayoutTextMessage
     override fun drawMessage1(view: MessageView) {
-      userMessageLayout.invisible()
+        userMessageLayout.invisible()
         friendMessageLayout.invisible()
         if (view.from == CURRENT_UID) {
-           userMessageLayout.visible()
-           userMessageText.text = view.text
+            userMessageLayout.visible()
+            userMessageText.text = view.text
             userMessageTime.text = view.time.transformTime()
         } else {
             friendMessageLayout.visible()
-           friendMessageText.text = view.text
+            friendMessageText.text = view.text
             friendMessageTime.text = view.time.transformTime()
         }
     }
+
+    override fun onAttached(View: MessageView) {
+
+    }
 }
+
+
