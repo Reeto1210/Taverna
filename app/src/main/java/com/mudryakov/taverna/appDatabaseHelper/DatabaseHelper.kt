@@ -27,6 +27,9 @@ lateinit var CURRENT_UID: String
 const val TYPE_IMAGE = "image"
 const val TYPE_TEXT = "text"
 const val TYPE_VOICE = "voice"
+const val TYPE_FILE = "file"
+
+const val ATTACH_FILE_CODE = 313
 
 const val NODE_FILES = "files"
 const val NODE_PHONES_CONTACTS = "phone_contacts"

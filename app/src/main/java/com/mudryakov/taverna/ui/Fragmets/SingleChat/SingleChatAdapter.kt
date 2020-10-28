@@ -28,6 +28,9 @@ class SingleChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 
+
+
+
     override fun getItemViewType(position: Int): Int {
         message = messagesList[position]
         return message.getTypeView()

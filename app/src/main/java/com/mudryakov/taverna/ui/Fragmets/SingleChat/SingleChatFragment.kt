@@ -1,7 +1,6 @@
 package com.mudryakov.taverna.ui.Fragmets.SingleChat
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.view.MotionEvent
@@ -11,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.StorageReference
 import com.mudryakov.taverna.Objects.*
@@ -23,6 +23,7 @@ import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.AppViewFactory
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_attach.*
 import kotlinx.android.synthetic.main.fragment_single_chat.*
 import kotlinx.android.synthetic.main.toolbar_for_chat.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +53,7 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var mMediaRecorder: AppMediaRecorder
     lateinit var uri: Uri
     lateinit var path1: StorageReference
+    lateinit var mBottomSheetBehaivor: BottomSheetBehavior<*>
     var voiceDuration: Int = 0
     var mSmooth = true
     var mIsScrolling = false
@@ -70,8 +72,10 @@ class SingleChatFragment(private val model: CommonModel) :
     private fun initMessageSent() {
 
         btnSendSingleImageAttach.setOnClickListener {
+            mBottomSheetBehaivor.state = BottomSheetBehavior.STATE_EXPANDED
+            btnAttachImage.setOnClickListener { attachImage() }
+            btnAttachFile.setOnClickListener { attach_file() }
 
-            attachImage()
         }
         btnSendSingleMessage.setOnClickListener {
 
@@ -97,7 +101,7 @@ class SingleChatFragment(private val model: CommonModel) :
                         )
                     )
                     val key = getMessageKey(model.id)
-                    mMediaRecorder.startRecord(key){
+                    mMediaRecorder.startRecord(key) {
                         CoroutineScope(Main).launch {
                             var recordTime = 0
                             while (event.action != MotionEvent.ACTION_UP) {
@@ -111,7 +115,6 @@ class SingleChatFragment(private val model: CommonModel) :
                         }
 
                     }
-
 
 
                 }
@@ -134,7 +137,7 @@ class SingleChatFragment(private val model: CommonModel) :
 
     }
 
-    private fun sendCurrentMessage(type: String, key: String) {
+    private fun sendCurrentMessage(type: String, key: String, fileName:String ="") {
 
         mSmooth = true
         putFileToStorage(path1, uri) {
@@ -143,14 +146,15 @@ class SingleChatFragment(private val model: CommonModel) :
                     sendMessage(
                         type = type,
                         friendId = model.id,
-                        text = "",
+                        text = fileName,
                         fileUrl = it,
                         key = key,
-                        duration = (voiceDuration+1000).toString()
+                        duration = if (voiceDuration % 1000 != 0) (voiceDuration + 1000).toString() else voiceDuration.toString()
                     ) {}
                 }
             }
 
+            mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
         }
     }
 
@@ -186,7 +190,14 @@ class SingleChatFragment(private val model: CommonModel) :
             .start(APP_ACTIVITY, this)
     }
 
+    private fun attach_file() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*"
+        startActivityForResult(intent, ATTACH_FILE_CODE)
+    }
+
     private fun initField() {
+        mBottomSheetBehaivor = BottomSheetBehavior.from(singleChatBottomSheet)
         mMediaRecorder = AppMediaRecorder()
         mRefreshLayout = SingleChatRefreshLayout
         mRecyclerView = SingleChatRecycle
@@ -275,15 +286,29 @@ class SingleChatFragment(private val model: CommonModel) :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && data != null
-            && resultCode == Activity.RESULT_OK
-        ) {
-            val key = getMessageKey(model.id)
-            uri = CropImage.getActivityResult(data).uri
-            path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
-            sendCurrentMessage(TYPE_IMAGE, key)
+        val key = getMessageKey(model.id)
+
+        path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
+        if (data != null) {
+            when (requestCode) {
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    uri = CropImage.getActivityResult(data).uri
+                    sendCurrentMessage(TYPE_IMAGE, key,)
+                }
+                ATTACH_FILE_CODE -> {
+                    uri = (data.data) as Uri
+                    val currentFileName = getFileNameFromUri(uri)
+                    sendCurrentMessage(TYPE_FILE, key, fileName = currentFileName)
+
+                }
+            }
         }
+
+
+        mBottomSheetBehaivor.state = BottomSheetBehavior.STATE_HIDDEN
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

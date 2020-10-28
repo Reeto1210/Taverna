@@ -16,6 +16,9 @@ class AppHolderFactory {
                  MessageView.MESSAGE_VOICE ->{
                      val view = LayoutInflater.from(parent.context).inflate(R.layout.chat_voice_item, parent, false)
                          HolderVoiceMessage(view)}
+                MessageView.MESSAGE_FILE ->{
+                    val view = LayoutInflater.from(parent.context).inflate(R.layout.chat_file_item, parent, false)
+                    HolderFileMessage(view)}
 
                 else ->{
                     val view =  LayoutInflater.from(parent.context).inflate(R.layout.chat_text_item, parent, false)
