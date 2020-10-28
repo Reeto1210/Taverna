@@ -106,12 +106,12 @@ fun initContacts() {
                 while (it.moveToNext()) {
                     val fullName =
                         it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    val phone =
+                    var phone =
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                             .replace(Regex("[\\s,-]"), "")
-                    if (phone[0]=='8') phone.replaceFirst("8", "+7")
+                    if (phone[0]=='8') phone = phone.replaceFirst("8", "+7")
                     val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
-                    arrayContacts.add(newModel)
+                   if (!arrayContacts.contains(newModel)) arrayContacts.add(newModel)
                 }
             }
             cursor?.close()
