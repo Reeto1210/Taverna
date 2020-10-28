@@ -5,6 +5,7 @@ import SettingsChangeUserFullName
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.*
+import com.mudryakov.taverna.MainActivity
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 
@@ -96,15 +97,16 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             && resultCode == RESULT_OK
         ) {
             val uri = CropImage.getActivityResult(data).uri
-              val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG)
+
+            val path = REF_STORAGE_ROOT.child(NODE_PROFILE_IMG).child(CURRENT_UID)
 
             putFileToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
                 downloadUrl(path) {
                     addUrlBase(it) { //it -> URL
                       REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_FILE_URL).setValue(it)
                         USER.photoUrl = it
-                        ic_settings_profile.downloadAndSetImage(USER.photoUrl)
-
+                      catch{ ic_settings_profile.downloadAndSetImage(USER.photoUrl)}
+                        (activity as MainActivity).myDrawer.updateProfile()
                     }
                 }
             }

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.bottom_sheet_attach.*
 import kotlinx.android.synthetic.main.fragment_single_chat.*
 import kotlinx.android.synthetic.main.toolbar_for_chat.view.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var mRef: DatabaseReference
 
     lateinit var chatAddMessageListener: appChildEventValueListener
+    lateinit var chatDownloadListener: appChildEventValueListener
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var mRefreshLayout: SwipeRefreshLayout
     lateinit var keyboardVisibilityEventListener: KeyboardVisibilityEventListener
@@ -79,7 +81,6 @@ class SingleChatFragment(private val model: CommonModel) :
         }
         btnSendSingleMessage.setOnClickListener {
 
-            mSmooth = true
             val textMessage = SingleChatMessageLayout.text.toString()
             val key = REF_DATABASE_ROOT.child("/$NODE_MESSAGES/$CURRENT_UID/${model.id}")
                 .push().key.toString()
@@ -121,7 +122,7 @@ class SingleChatFragment(private val model: CommonModel) :
                 if (event.action == MotionEvent.ACTION_UP) {
                     mMediaRecorder.stopRecord { file, key ->
                         uri = Uri.fromFile(file)
-                        path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
+
                         sendCurrentMessage(TYPE_VOICE, key)
                     }
                     btnSendSingleVoiceMessage.colorFilter = null
@@ -137,21 +138,20 @@ class SingleChatFragment(private val model: CommonModel) :
 
     }
 
-    private fun sendCurrentMessage(type: String, key: String, fileName:String ="") {
-
+    private fun sendCurrentMessage(type: String, key: String, fileName: String = "") {
+        path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
         mSmooth = true
         putFileToStorage(path1, uri) {
             downloadUrl(path1) {
-                addUrlBase(it) { //it -> URL
-                    sendMessage(
-                        type = type,
-                        friendId = model.id,
-                        text = fileName,
-                        fileUrl = it,
-                        key = key,
-                        duration = if (voiceDuration % 1000 != 0) (voiceDuration + 1000).toString() else voiceDuration.toString()
-                    ) {}
-                }
+                sendMessage(
+                    type = type,
+                    friendId = model.id,
+                    text = fileName,
+                    fileUrl = it,
+                    key = key,
+                    duration = if (voiceDuration % 1000 != 0) (voiceDuration + 1000).toString() else voiceDuration.toString()
+                ) {}
+
             }
 
             mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
@@ -175,7 +175,6 @@ class SingleChatFragment(private val model: CommonModel) :
         keyboardVisibilityEventListener = object : KeyboardVisibilityEventListener {
             override fun onVisibilityChanged(isOpen: Boolean) {
                 if (isOpen && mLayoutManager.findLastVisibleItemPosition() > mAdapter.itemCount - 10) {
-
                     mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
                 }
             }
@@ -204,23 +203,27 @@ class SingleChatFragment(private val model: CommonModel) :
         mLayoutManager = LinearLayoutManager(this.context)
         mRef = REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(model.id)
         mAdapter = SingleChatAdapter()
-    }
 
+    }
     private fun initRecycle() {
+
+
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.hasFixedSize()
         mRecyclerView.isNestedScrollingEnabled = true
         mRecyclerView.adapter = mAdapter
 
         chatAddMessageListener = appChildEventValueListener {
-            if (!mSmooth) mAdapter.addItemToTop(AppViewFactory.getView(it.getCommonMessage())) // ok
-            else {
 
-                mAdapter.addItemToBot(AppViewFactory.getView(it.getCommonMessage())) //rabotaet
+            mAdapter.addItemToBot(AppViewFactory.getView(it.getCommonMessage())) //rabotaet
 
-            }
-            if (mSmooth) mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
+ mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
+
         }
+        chatDownloadListener =
+            appChildEventValueListener { mAdapter.addItemToTop(AppViewFactory.getView(it.getCommonMessage())) }
+
+
 
         mRef.limitToLast(count).addChildEventListener(chatAddMessageListener) //ok
 
@@ -236,6 +239,7 @@ class SingleChatFragment(private val model: CommonModel) :
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
                     mIsScrolling = true
 
+
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -250,10 +254,10 @@ class SingleChatFragment(private val model: CommonModel) :
 
     private fun updateAdapter() {
         mIsScrolling = false
-        mSmooth = false
         count += 30
-        mRef.removeEventListener(chatAddMessageListener)
-        mRef.limitToLast(count).addChildEventListener(chatAddMessageListener)
+        mRef.removeEventListener(chatDownloadListener)
+        mRef.limitToLast(count).addChildEventListener(chatDownloadListener)
+
     }
 
 
@@ -263,6 +267,7 @@ class SingleChatFragment(private val model: CommonModel) :
         TOOLBAR.setNavigationOnClickListener { APP_ACTIVITY.supportFragmentManager.popBackStack() }
         refForToolbarUser.removeEventListener(toolbarListener)
         mRef.removeEventListener(chatAddMessageListener)
+    mRef.removeEventListener(chatDownloadListener)
     }
 
 
@@ -286,14 +291,15 @@ class SingleChatFragment(private val model: CommonModel) :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         val key = getMessageKey(model.id)
 
-        path1 = REF_STORAGE_ROOT.child(NODE_FILES).child(key)
+
         if (data != null) {
             when (requestCode) {
                 CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                     uri = CropImage.getActivityResult(data).uri
-                    sendCurrentMessage(TYPE_IMAGE, key,)
+                    sendCurrentMessage(TYPE_IMAGE, key)
                 }
                 ATTACH_FILE_CODE -> {
                     uri = (data.data) as Uri
@@ -307,7 +313,6 @@ class SingleChatFragment(private val model: CommonModel) :
 
         mBottomSheetBehaivor.state = BottomSheetBehavior.STATE_HIDDEN
     }
-
 
 
     override fun onDestroy() {

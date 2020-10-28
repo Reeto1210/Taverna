@@ -51,7 +51,7 @@ const val CHILD_STATUS = "status"
 const val CHILD_FULL_NAME = "fullName"
 const val CHILD_FILE_URL = "fileUrl"
 const val CHILD_BIO = "bio"
-
+const val CHILD_PHOTO_URL = "photoUrl"
 
 fun initFireBase() {
     AUTH = FirebaseAuth.getInstance()
@@ -77,7 +77,7 @@ inline fun downloadUrl(path: StorageReference, crossinline function: (url: Strin
 
 inline fun addUrlBase(url: String, crossinline function: () -> Unit) {
     REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
-        .child(CHILD_FILE_URL)
+        .child(CHILD_PHOTO_URL)
         .setValue(url)
         .addOnSuccessListener { function() }
         .addOnFailureListener { showToast("Произошла ошибка") }
@@ -108,7 +108,8 @@ fun initContacts() {
                         it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                     val phone =
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                            .replace(Regex("[\\s,-]"), "").replace("8", "+7")
+                            .replace(Regex("[\\s,-]"), "")
+                    if (phone[0]=='8') phone.replaceFirst("8", "+7")
                     val newModel = CommonModel(fullName = fullName, phoneNumber = phone)
                     arrayContacts.add(newModel)
                 }

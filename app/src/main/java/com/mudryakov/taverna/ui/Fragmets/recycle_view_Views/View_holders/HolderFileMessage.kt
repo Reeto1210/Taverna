@@ -13,6 +13,7 @@ import com.mudryakov.taverna.appDatabaseHelper.REF_STORAGE_ROOT
 import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.MessageView
 import kotlinx.android.synthetic.main.chat_file_item.view.*
 import java.io.File
+import java.lang.Exception
 
 
 class HolderFileMessage(view: View) : RecyclerView.ViewHolder(view), MessageHolder {
@@ -50,42 +51,35 @@ class HolderFileMessage(view: View) : RecyclerView.ViewHolder(view), MessageHold
         when (View1.from == CURRENT_UID) {
             true -> {
                 btnUserDownloadFile.setOnClickListener {
-                    btnUserDownloadFile.visibility = View.INVISIBLE
+                    btnFriendDownloadFile.visibility = View.INVISIBLE
                     userProgressBar.visibility = View.VISIBLE
 
-                    downLoadFile(View1) {
+                    downLoadFile(View1){
                         btnFriendDownloadFile.visibility = View.VISIBLE
                         userProgressBar.visibility = View.GONE
-                    }
-                }
+                    } }
             }
 
             false -> {
                 btnFriendDownloadFile.setOnClickListener {
                     btnFriendDownloadFile.visibility = View.INVISIBLE
                     FriendProgressBar.visibility = View.VISIBLE
-                    downLoadFile(View1) {
+                    downLoadFile(View1){
                         btnFriendDownloadFile.visibility = View.VISIBLE
                         FriendProgressBar.visibility = View.GONE
-                    }
-                }
+                    } }
             }
         }
     }
 
-    private fun downLoadFile(View: MessageView, function: () -> Unit) {
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            View.text
-        )
-        if (checkPermission(WRITE_FILES)) {
-            try {
-                REF_STORAGE_ROOT.child(NODE_FILES).child(View.id).getFile(file)
-                    .addOnSuccessListener { function() }
-            } catch (e: Exception) {
-                showToast(e.message.toString())
-            }
-        }
+    private fun downLoadFile(View: MessageView,function:()->Unit) {
+      val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),View.text)
+if (checkPermission(WRITE_FILES)){
+    try {
+        REF_STORAGE_ROOT.child(NODE_FILES).child(View.id).getFile(file).addOnSuccessListener { function() }
+    }catch (e:Exception){
+        showToast(e.message.toString())}
+}
     }
 
 }
