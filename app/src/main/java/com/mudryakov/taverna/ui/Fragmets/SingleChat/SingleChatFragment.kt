@@ -3,8 +3,7 @@ package com.mudryakov.taverna.ui.Fragmets.SingleChat
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.AbsListView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +18,8 @@ import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainLIstRecycleAdapter
+
 import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.AppViewFactory
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_main.*
@@ -55,6 +56,7 @@ class SingleChatFragment(private val model: CommonModel) :
     lateinit var uri: Uri
     lateinit var path1: StorageReference
     lateinit var mBottomSheetBehaivor: BottomSheetBehavior<*>
+
     var voiceDuration: Int = 0
     var mSmooth = true
     var mIsScrolling = false
@@ -195,6 +197,7 @@ class SingleChatFragment(private val model: CommonModel) :
     }
 
     private fun initField() {
+        setHasOptionsMenu(true)
         mBottomSheetBehaivor = BottomSheetBehavior.from(singleChatBottomSheet)
         mMediaRecorder = AppMediaRecorder()
         mRefreshLayout = SingleChatRefreshLayout
@@ -204,6 +207,7 @@ class SingleChatFragment(private val model: CommonModel) :
         mAdapter = SingleChatAdapter()
 
     }
+
     private fun initRecycle() {
 
 
@@ -216,7 +220,7 @@ class SingleChatFragment(private val model: CommonModel) :
 
             mAdapter.addItemToBot(AppViewFactory.getView(it.getCommonMessage())) //rabotaet
 
- mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
+            mRecyclerView.smoothScrollToPosition(mAdapter.itemCount)
 
         }
         chatDownloadListener =
@@ -266,7 +270,7 @@ class SingleChatFragment(private val model: CommonModel) :
         TOOLBAR.setNavigationOnClickListener { APP_ACTIVITY.supportFragmentManager.popBackStack() }
         refForToolbarUser.removeEventListener(toolbarListener)
         mRef.removeEventListener(chatAddMessageListener)
-    mRef.removeEventListener(chatDownloadListener)
+        mRef.removeEventListener(chatDownloadListener)
     }
 
 
@@ -317,6 +321,43 @@ class SingleChatFragment(private val model: CommonModel) :
     override fun onDestroy() {
         super.onDestroy()
         mMediaRecorder.releaseRecord()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        APP_ACTIVITY.menuInflater.inflate(R.menu.main_list_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.deleteMainChat -> deleteMainChat { changeFragment(MainFragment())}
+            R.id.clearMainchat -> clearMainChat {
+                MainLIstRecycleAdapter().removeDialog(model.id)
+                changeFragment(MainFragment())}
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun deleteMainChat(function: () -> Unit) {
+      REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID).child(model.id)
+          .removeValue()
+          .addOnFailureListener { showToast(it.message.toString()) }
+          .addOnSuccessListener {
+              REF_DATABASE_ROOT.child(NODE_MESSAGES).child(model.id).child(CURRENT_UID)
+                  .removeValue()
+                  .addOnFailureListener { showToast(it.message.toString()) }
+                  .addOnSuccessListener {function()}
+          }
+    }
+
+    private fun clearMainChat(function: () -> Unit) {
+        REF_DATABASE_ROOT.child(NODE_DIALOGS).child(CURRENT_UID).child(model.id)
+            .removeValue()
+            .addOnCompleteListener {
+                showToast(getString(R.string.chat_has_been_cleared))
+                function()
+            }
+            .addOnFailureListener { showToast(it.message.toString()) }
     }
 }
 

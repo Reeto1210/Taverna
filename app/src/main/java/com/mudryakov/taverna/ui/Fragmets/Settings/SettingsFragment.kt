@@ -4,17 +4,17 @@ import ChangeUserNameFragment
 import SettingsChangeUserFullName
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.Objects.*
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
-
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.Objects.*
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
-import java.lang.Exception
 
 
 class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
@@ -103,8 +103,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             putFileToStorage(path, uri) { //uri - kartinka resultat activnosti cropa
                 downloadUrl(path) {
                     addUrlBase(it) { //it -> URL
-                      REF_DATABASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_FILE_URL).setValue(it)
-                        USER.photoUrl = it
+                       USER.photoUrl = it
                       catch{ ic_settings_profile.downloadAndSetImage(USER.photoUrl)}
                         (activity as MainActivity).myDrawer.updateProfile()
                     }

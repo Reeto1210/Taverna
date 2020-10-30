@@ -1,19 +1,23 @@
 package com.mudryakov.taverna
 
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.mudryakov.taverna.Objects.AppDrawer
+import com.mudryakov.taverna.Objects.READ_CONTACTS
+import com.mudryakov.taverna.Objects.appStatus
+import com.mudryakov.taverna.Objects.changeFragment
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.databinding.ActivityMainBinding
 import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainFragment
 import com.mudryakov.taverna.ui.Fragmets.Register.EnterPhoneFragment
-import com.mudryakov.taverna.Objects.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var mBinding: ActivityMainBinding
     lateinit var myDrawer: AppDrawer
 

@@ -27,14 +27,17 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
     lateinit var createContentCor: Job
     override fun onResume() {
         super.onResume()
-        APP_ACTIVITY.title = "Taverna"
-        (activity as MainActivity).myDrawer.enableDrawer()
+        initFieleds()
         hideKeyBoard()
         initRecycle()
-        createContentCor = CoroutineScope(IO).launch {
-            createContent()
-            cancel()
-        }
+
+    }
+
+    private fun initFieleds() {
+        APP_ACTIVITY.title = "Taverna"
+        (activity as MainActivity).myDrawer.enableDrawer()
+
+
     }
 
     private fun createContent() {
@@ -76,7 +79,12 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
                     .addListenerForSingleValueEvent(appValueEventListener { messageSnapShot ->
                         val tempList =
                             messageSnapShot.children.map { a -> a.getCommonMessage() }
+                       if (tempList.isNotEmpty())
                         currentLastMessage = tempList[0]
+                        else currentLastMessage = MessageModel( time = "")
+
+
+
                         currentMainModel =
                             MainListModel(
                                 currentFriend,
@@ -95,6 +103,11 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
         mAdapter = MainLIstRecycleAdapter()
         mRecyclerView.adapter = mAdapter
         mRecyclerView.layoutManager = LinearLayoutManager(this.context)
-
+        createContentCor = CoroutineScope(IO).launch {
+            createContent()
+            cancel()
+        }
     }
+
+
 }

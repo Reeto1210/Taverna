@@ -20,4 +20,7 @@
     <string name="Toast_change_data">Данные изменены</string>
     <string name="Contacts_title">Контакты</string>
     <string name="SingleChatMessegaHint">Сообщение</string>
+    <string name="clear_chat">Очитстить чат</string>
+    <string name="Delete_chat">Удалить чат</string>
+    <string name="chat_has_been_cleared">Чат очищен</string>
 </resources>
