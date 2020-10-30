@@ -3,9 +3,10 @@ package com.mudryakov.taverna.ui.Fragmets.MainChatList
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mudryakov.taverna.MainActivity
-import com.mudryakov.taverna.Objects.*
+import com.mudryakov.taverna.Objects.appValueEventListener
+import com.mudryakov.taverna.Objects.getCommonMessage
+import com.mudryakov.taverna.Objects.hideKeyBoard
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
@@ -16,14 +17,13 @@ import kotlinx.android.synthetic.main.main_list_fragment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 
 class MainFragment : Fragment(R.layout.main_list_fragment) {
     lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: MainLIstRecycleAdapter
-    lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     lateinit var createContentCor: Job
     override fun onResume() {
         super.onResume()
@@ -31,28 +31,21 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
         (activity as MainActivity).myDrawer.enableDrawer()
         hideKeyBoard()
         initRecycle()
-        createContentCor = CoroutineScope(IO).launch { createContent() }
-        initSwipeRefresh()
-    }
-
-    private fun initSwipeRefresh() {
-        mSwipeRefreshLayout = mainListRefreshLayout
-        mSwipeRefreshLayout.setOnRefreshListener {
-           createContentCor.invokeOnCompletion {
-           mSwipeRefreshLayout.isRefreshing = false
-            }
+        createContentCor = CoroutineScope(IO).launch {
+            createContent()
+            cancel()
         }
     }
 
     private fun createContent() {
-        mAdapter.mutableList.clear()
-         val mRefDialogs = REF_DATABASE_ROOT.child(NODE_DIALOGS).child(CURRENT_UID)
+
+        val mRefDialogs = REF_DATABASE_ROOT.child(NODE_DIALOGS).child(CURRENT_UID)
         lateinit var listCurrentHelpModel: List<CustomhelpModel>
         mRefDialogs.addListenerForSingleValueEvent(appValueEventListener {
             listCurrentHelpModel =
                 it.children.map { it.getValue(CustomhelpModel::class.java) ?: CustomhelpModel() }
             listCurrentHelpModel.forEach { currentHelpModel ->
-               compainNEwItem(currentHelpModel)
+                compainNEwItem(currentHelpModel)
 
             }
         })
@@ -68,24 +61,22 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
         val mRefMessages = REF_DATABASE_ROOT.child(NODE_MESSAGES).child(CURRENT_UID)
 
 
-
-
-
-
-
         mRefUsers.child(currentHelpModel.id)
             .addListenerForSingleValueEvent(appValueEventListener { userSnapshot ->
                 currentFriend = userSnapshot.getValue(CommonModel::class.java) ?: CommonModel()
 
-
+                if (currentFriend.fullName == "") {
+                    REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS).child(CURRENT_UID)
+                        .child(currentFriend.id).child(CHILD_FULL_NAME)
+                        .addListenerForSingleValueEvent(appValueEventListener { contactsnameSnapShot ->
+                            currentFriend.fullName = contactsnameSnapShot.value.toString()
+                        })
+                }
                 mRefMessages.child(currentFriend.id).limitToLast(1)
                     .addListenerForSingleValueEvent(appValueEventListener { messageSnapShot ->
                         val tempList =
                             messageSnapShot.children.map { a -> a.getCommonMessage() }
                         currentLastMessage = tempList[0]
-
-
-
                         currentMainModel =
                             MainListModel(
                                 currentFriend,
@@ -93,7 +84,6 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
                                 currentHelpModel.type
                             )
                         mAdapter.addItem(currentMainModel)
-
 
                     })
             })
