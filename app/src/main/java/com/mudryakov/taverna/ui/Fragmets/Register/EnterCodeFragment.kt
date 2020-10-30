@@ -3,7 +3,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.ui.Fragmets.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainFragment
 import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.fragment_enter_code.*
 

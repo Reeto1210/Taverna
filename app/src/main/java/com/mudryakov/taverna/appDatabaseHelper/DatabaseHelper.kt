@@ -38,6 +38,7 @@ const val NODE_PROFILE_IMG = "profileImg"
 const val NODE_USERNAMES = "usernames"
 const val NODE_USERS = "users"
 const val NODE_MESSAGES = "messages"
+const val NODE_DIALOGS = "dialogs"
 
 const val CHILD_DURATION = "duration"
 const val CHILD_TIME = "time"
@@ -52,6 +53,7 @@ const val CHILD_FULL_NAME = "fullName"
 const val CHILD_FILE_URL = "fileUrl"
 const val CHILD_BIO = "bio"
 const val CHILD_PHOTO_URL = "photoUrl"
+
 
 fun initFireBase() {
     AUTH = FirebaseAuth.getInstance()
@@ -146,14 +148,13 @@ fun sendMessage(
     fileUrl: String="" ,
     key: String = "",
     duration:String = "",
+    dialogType:String = "Text",
     function: () -> Unit
 
 ) {
 
     val refUser = "/$NODE_MESSAGES/$CURRENT_UID/$friendId"
     val refFriend = "/$NODE_MESSAGES/$friendId/$CURRENT_UID"
-
-
     val addMessage = HashMap<String, Any>()
     addMessage[CHILD_TEXT] = text
     addMessage[CHILD_FROM] = CURRENT_UID
@@ -169,7 +170,28 @@ addMessage[CHILD_DURATION] = duration
 
     REF_DATABASE_ROOT.updateChildren(hashForUpdate)
         .addOnSuccessListener { function() }
-        .addOnFailureListener { showToast(it.message.toString()) }
+        .addOnFailureListener { showToast(it.message.toString()) }.addOnCompleteListener {
+            addDialogtoRealTimeDataBase(friendId,dialogType)
+        }
+}
+
+fun addDialogtoRealTimeDataBase(friendId:String,dialogType: String) {
+    val mUser = "$NODE_DIALOGS/$CURRENT_UID/$friendId"
+    val mfriend = "$NODE_DIALOGS/$friendId/$CURRENT_UID"
+
+    val mapUser = HashMap<String,Any>()
+    val mapFriend = HashMap<String,Any>()
+
+    mapFriend[CHILD_ID]= CURRENT_UID
+    mapFriend[CHILD_TYPE]= dialogType
+    mapUser[CHILD_TYPE]= dialogType
+    mapUser[CHILD_ID]= friendId
+
+    val hashForUpdate = HashMap<String,Any>()
+    hashForUpdate[mUser] = mapUser
+    hashForUpdate[mfriend] = mapFriend
+    REF_DATABASE_ROOT.updateChildren(hashForUpdate)
+
 }
 
 fun getMessageKey(id: String) =

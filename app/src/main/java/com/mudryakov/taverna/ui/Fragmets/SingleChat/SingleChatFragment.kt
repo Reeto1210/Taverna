@@ -18,7 +18,7 @@ import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
-import com.mudryakov.taverna.ui.Fragmets.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainFragment
 import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.AppViewFactory
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,7 +27,6 @@ import kotlinx.android.synthetic.main.bottom_sheet_attach.*
 import kotlinx.android.synthetic.main.fragment_single_chat.*
 import kotlinx.android.synthetic.main.toolbar_for_chat.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
