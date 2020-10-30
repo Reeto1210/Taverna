@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
@@ -15,6 +16,9 @@ import com.mudryakov.taverna.ui.Fragmets.SingleChat.SingleChatFragment
 import com.mudryakov.taverna.Objects.*
 import kotlinx.android.synthetic.main.contacts_view.view.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     lateinit var myReference: DatabaseReference
@@ -22,6 +26,7 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     lateinit var myAdapter: FirebaseRecyclerAdapter<CommonModel, contactHolder>
     lateinit var myUsers: DatabaseReference
     lateinit var mRefUserListener: appValueEventListener
+    lateinit var mRefreshLayout: SwipeRefreshLayout
     var listenersHashMap = HashMap<DatabaseReference, appValueEventListener>()
 
     class contactHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,7 +39,16 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     override fun onResume() {
         super.onResume()
         APP_ACTIVITY.title = getString(R.string.Contacts_title)
+        initRefreshLayout()
         initRecycleView()
+    }
+
+    private fun initRefreshLayout() {
+        mRefreshLayout = Contacts_refresh
+        mRefreshLayout.setOnRefreshListener {
+            CoroutineScope(IO).launch {initContacts()
+            }.invokeOnCompletion { mRefreshLayout.isRefreshing = false }
+        }
     }
 
     private fun initRecycleView() {

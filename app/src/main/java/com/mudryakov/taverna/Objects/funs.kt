@@ -2,24 +2,22 @@ package com.mudryakov.taverna.Objects
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
-import com.mudryakov.taverna.R
 import com.mudryakov.taverna.MainActivity
+import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
 import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.MessageModel
-import com.mudryakov.taverna.ui.Fragmets.recycle_view_Views.Views.MessageView
 import com.squareup.picasso.Picasso
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +25,6 @@ import java.util.*
 fun showToast(mesg: String) {
     Toast.makeText(APP_ACTIVITY, mesg, Toast.LENGTH_LONG).show()
 }
-
 
 
 fun changeFragment(newFragment: Fragment, addStack: Boolean = true) {
@@ -75,7 +72,6 @@ fun DataSnapshot.getCommonModel() = this.getValue(CommonModel::class.java) ?: Co
 fun DataSnapshot.getCommonMessage() = this.getValue(MessageModel::class.java) ?: MessageModel()
 
 
-
 fun greateDialogForConfirm(text: String, function: () -> Unit) {
     val builder = AlertDialog.Builder(APP_ACTIVITY)
     builder.setTitle("Подтвердите действие")
@@ -84,24 +80,52 @@ fun greateDialogForConfirm(text: String, function: () -> Unit) {
         .setNegativeButton("Нет") { dialog, wich -> }
         .show()
 }
+
 fun String.transformTime(): String {
     val date = Date(this.toLong())
-    val timeFormat = SimpleDateFormat("HH:mm",Locale.getDefault())
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     return timeFormat.format(date)
 
 }
- fun RestartActivity() {
+
+fun RestartActivity() {
     val intent = Intent(APP_ACTIVITY, MainActivity::class.java)
-     APP_ACTIVITY.startActivity(intent)
-     APP_ACTIVITY.finish()
+    APP_ACTIVITY.startActivity(intent)
+    APP_ACTIVITY.finish()
 }
-fun View.invisible(){
-    this.visibility = View.GONE}
-fun View.visible(){
-    this.visibility = View.VISIBLE}
-fun catch(function:()->Unit){
-    try{
+
+fun View.invisible() {
+    this.visibility = View.GONE
+}
+
+fun View.visible() {
+    this.visibility = View.VISIBLE
+}
+
+fun catch(function: () -> Unit) {
+    try {
         function()
-    }catch (e:Exception){
-        showToast(e.message.toString())}
+    } catch (e: Exception) {
+        showToast(e.message.toString())
+    }
+}
+
+fun Int.transformForTimer(format: String): String {
+    val timeFormat = SimpleDateFormat(format)
+    return timeFormat.format(this)
+}
+
+fun getFileNameFromUri(uri: Uri): String {
+    var result = ""
+    val cursor = APP_ACTIVITY.contentResolver.query(uri, null, null, null, null)
+try {
+    if(cursor!= null && cursor.moveToFirst()){
+        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+    }
+}catch(e:java.lang.Exception){
+    showToast(e.message.toString())
+}finally {
+    cursor?.close()
+}
+    return result
 }

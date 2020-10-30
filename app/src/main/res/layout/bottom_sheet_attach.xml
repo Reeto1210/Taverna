@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheetAttach"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable = "true"
+    app:behavior_peekHeight ="0dp"
+   android:background="@color/accent"
+    >
+
+
+    <ImageView
+        android:id="@+id/btnAttachImage"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/LeftMargin"
+        android:src="@drawable/ic_attach_image_24" />
+
+    <ImageView
+        android:id="@+id/btnAttachFile"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/LeftMargin"
+        android:src="@drawable/ic_attach_file" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

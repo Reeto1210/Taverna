@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.databinding.ActivityMainBinding
-import com.mudryakov.taverna.ui.Fragmets.MainFragment
+import com.mudryakov.taverna.ui.Fragmets.MainChatList.MainFragment
 import com.mudryakov.taverna.ui.Fragmets.Register.EnterPhoneFragment
 import com.mudryakov.taverna.Objects.*
 import kotlinx.coroutines.CoroutineScope

@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#0088cc</color>
     <color name="colorBackgroundMessege">#79BF71</color>
+    <color name="colorVoiceBackground">#304A2C</color>
     <color name="colorPrimaryDark">#046B9F</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="material_drawer_primary">#2196F3</color>
@@ -9,6 +10,8 @@
     <color name="material_drawer_primary_light">#BBDEFB</color>
     <color name="material_drawer_accent">#FF4081</color>
     <color name="backForSIngleChat">#A6DAE1</color>
+
+
     <!-- OVERWRITE THESE COLORS FOR A LIGHT THEME -->
     <!-- MaterialDrawer DEFAULT colors -->
     <color name="material_drawer_background">#F9F9F9</color>
