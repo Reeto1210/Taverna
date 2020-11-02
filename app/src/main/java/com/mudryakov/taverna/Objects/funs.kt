@@ -17,7 +17,10 @@ import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
 import com.mudryakov.taverna.appDatabaseHelper.USER
 import com.mudryakov.taverna.models.CommonModel
 import com.mudryakov.taverna.models.MessageModel
+import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.squareup.picasso.Picasso
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,12 +34,12 @@ fun changeFragment(newFragment: Fragment, addStack: Boolean = true) {
     if (addStack) {
         APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(R.id.dataConteiner, newFragment)
-            ?.addToBackStack(null)
-            ?.commit()
+            .addToBackStack(null)
+            .commit()
     } else {
         APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(R.id.dataConteiner, newFragment)
-            ?.commit()
+            .commit()
     }
 }
 
@@ -56,6 +59,7 @@ fun hideKeyBoard() {
         APP_ACTIVITY.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(APP_ACTIVITY.window.decorView.windowToken, 0)
 }
+
 
 fun setFullnameUi(): String {
     if (USER.fullName.isEmpty()) return "Unknown"
@@ -128,4 +132,13 @@ try {
     cursor?.close()
 }
     return result
+}
+fun sizeOfMembers(size:Int) = APP_ACTIVITY.resources.getQuantityString(R.plurals.plurals_greate_group,size,size)
+fun BaseFragment.startCrop() {
+    CropImage.activity()
+        .setAspectRatio(1, 1)
+        .setRequestedSize(250, 250)
+        .setCropShape(CropImageView.CropShape.OVAL)
+        .start(APP_ACTIVITY,this)
+
 }

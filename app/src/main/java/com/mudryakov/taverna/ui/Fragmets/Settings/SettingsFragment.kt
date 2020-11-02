@@ -13,7 +13,6 @@ import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.ui.Fragmets.BaseFragment
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 
@@ -37,26 +36,14 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             )
         }
         SettingsBtnNewAvatar.setOnClickListener {
-            changeProfileImg()
+            startCrop()
         }
-
-
     }
 
-    private fun changeProfileImg() {
-        CropImage.activity()
-            .setAspectRatio(1, 1)
-            .setRequestedSize(250, 250)
-            .setCropShape(CropImageView.CropShape.OVAL)
-            .start(APP_ACTIVITY, this)
-
-    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         activity?.menuInflater?.inflate(R.menu.settings_menu, menu)
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -66,10 +53,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
                    appStatus.changeState(appStatus.OFFLINE)
                    AUTH.signOut()
                    RestartActivity()
-
                    }
-
-
             }
             R.id.changeName ->
                 changeFragment(SettingsChangeUserFullName())
@@ -110,8 +94,5 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
                 }
             }
         }
-
-
     }
-
 }

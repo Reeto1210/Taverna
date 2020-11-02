@@ -17,7 +17,7 @@ import com.mudryakov.taverna.ui.Fragmets.SingleChat.SingleChatFragment
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.main_list_item.view.*
 
-var mutableListMainListAdapter = mutableListOf<MainListModel>()
+
 
 class MainLIstRecycleAdapter : RecyclerView.Adapter<MainLIstRecycleAdapter.MainListViewHolder>() {
 
@@ -28,8 +28,7 @@ class MainLIstRecycleAdapter : RecyclerView.Adapter<MainLIstRecycleAdapter.MainL
         val mainListFullName: TextView = view.contact_fullname
         val mainListLastMessage: TextView = view.mainListLastMessage
         val mainListLastMessageTime: TextView = view.mainListMessageTime
-
-    }
+           }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainListViewHolder {
         val view =
@@ -47,6 +46,7 @@ class MainLIstRecycleAdapter : RecyclerView.Adapter<MainLIstRecycleAdapter.MainL
     }
 
     override fun onBindViewHolder(holder: MainListViewHolder, position: Int) {
+
         val currentMainListModel = mutableListMainListAdapter[position]
         holder.mainListFullName.text = currentMainListModel.user.fullName
         holder.mainListPhoto.downloadAndSetImage(currentMainListModel.user.photoUrl)
@@ -84,13 +84,16 @@ class MainLIstRecycleAdapter : RecyclerView.Adapter<MainLIstRecycleAdapter.MainL
         }
         if (i != -1) {
             notifyItemRemoved(i)
+
+
             mutableListMainListAdapter.removeAt(i)
             i = -1
         }
-        if (!mutableListMainListAdapter.any { it.user == item.user }) {
+        if (!mutableListMainListAdapter.any { it.user.id == item.user.id}) {
             mutableListMainListAdapter.add(item)
             mutableListMainListAdapter.sortByDescending { it.message.time.toString() }
             notifyItemInserted(mutableListMainListAdapter.indexOf(item))
+
         }
     }
 
@@ -105,4 +108,9 @@ class MainLIstRecycleAdapter : RecyclerView.Adapter<MainLIstRecycleAdapter.MainL
         mutableListMainListAdapter.removeAt(i)
 
     }
+companion object{
+    var mutableListMainListAdapter = mutableListOf<MainListModel>()
 }
+}
+
+

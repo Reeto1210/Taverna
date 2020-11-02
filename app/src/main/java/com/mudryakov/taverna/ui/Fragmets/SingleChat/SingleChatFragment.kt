@@ -76,7 +76,7 @@ class SingleChatFragment(private val model: CommonModel) :
 
         btnSendSingleImageAttach.setOnClickListener {
             mBottomSheetBehaivor.state = BottomSheetBehavior.STATE_EXPANDED
-            btnAttachImage.setOnClickListener { attachImage() }
+            btnAttachImage.setOnClickListener {startCrop() }
             btnAttachFile.setOnClickListener { attach_file() }
 
         }
@@ -183,12 +183,7 @@ class SingleChatFragment(private val model: CommonModel) :
         KeyboardVisibilityEvent.setEventListener(APP_ACTIVITY, keyboardVisibilityEventListener)
     }
 
-    private fun attachImage() {
-        CropImage.activity()
-            .setAspectRatio(1, 1)
-            .setRequestedSize(600, 600)
-            .start(APP_ACTIVITY, this)
-    }
+
 
     private fun attach_file() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
