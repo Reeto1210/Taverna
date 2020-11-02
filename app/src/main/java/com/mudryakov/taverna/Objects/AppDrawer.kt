@@ -1,6 +1,5 @@
 package com.mudryakov.taverna.Objects
 
-import com.mudryakov.taverna.ui.Fragmets.contacts.ContactsFragment
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
@@ -20,7 +19,9 @@ import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.APP_ACTIVITY
 import com.mudryakov.taverna.appDatabaseHelper.TOOLBAR
 import com.mudryakov.taverna.appDatabaseHelper.USER
+import com.mudryakov.taverna.ui.Fragmets.Groups.GroupAddFragment
 import com.mudryakov.taverna.ui.Fragmets.Settings.SettingsFragment
+import com.mudryakov.taverna.ui.Fragmets.contacts.ContactsFragment
 
 
 class AppDrawer{
@@ -133,6 +134,7 @@ class AppDrawer{
 
     private fun onClickDrawer(position: Int) {
         when (position) {
+            1 -> changeFragment(GroupAddFragment())
             7 ->changeFragment(SettingsFragment())
             4 -> changeFragment(ContactsFragment())
                 }

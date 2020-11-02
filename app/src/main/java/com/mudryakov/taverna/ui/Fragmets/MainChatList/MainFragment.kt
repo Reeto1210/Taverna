@@ -3,10 +3,9 @@ package com.mudryakov.taverna.ui.Fragmets.MainChatList
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mudryakov.taverna.MainActivity
-import com.mudryakov.taverna.Objects.appValueEventListener
-import com.mudryakov.taverna.Objects.getCommonMessage
-import com.mudryakov.taverna.Objects.hideKeyBoard
+import com.mudryakov.taverna.Objects.*
 import com.mudryakov.taverna.R
 import com.mudryakov.taverna.appDatabaseHelper.*
 import com.mudryakov.taverna.models.CommonModel
@@ -15,7 +14,7 @@ import com.mudryakov.taverna.models.MainListModel
 import com.mudryakov.taverna.models.MessageModel
 import kotlinx.android.synthetic.main.main_list_fragment.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -25,16 +24,28 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
     lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: MainLIstRecycleAdapter
     lateinit var createContentCor: Job
+   lateinit var mRefreshLayout: SwipeRefreshLayout
     override fun onResume() {
         super.onResume()
-        APP_ACTIVITY.title = "Taverna"
-        (activity as MainActivity).myDrawer.enableDrawer()
+        initFieleds()
         hideKeyBoard()
         initRecycle()
-        createContentCor = CoroutineScope(IO).launch {
-            createContent()
-            cancel()
-        }
+        initRefresh()
+
+    }
+
+    private fun initRefresh() {
+        mRefreshLayout = mainRefreshLayout
+   mRefreshLayout.setOnRefreshListener {
+       createContentCor.invokeOnCompletion { changeFragment(MainFragment()) }
+   }
+    }
+
+    private fun initFieleds() {
+
+       APP_ACTIVITY.title = "Taverna"
+        (activity as MainActivity).myDrawer.enableDrawer()
+
     }
 
     private fun createContent() {
@@ -42,8 +53,7 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
         val mRefDialogs = REF_DATABASE_ROOT.child(NODE_DIALOGS).child(CURRENT_UID)
         lateinit var listCurrentHelpModel: List<CustomhelpModel>
         mRefDialogs.addListenerForSingleValueEvent(appValueEventListener {
-            listCurrentHelpModel =
-                it.children.map { it.getValue(CustomhelpModel::class.java) ?: CustomhelpModel() }
+            listCurrentHelpModel = it.children.map { it.getValue(CustomhelpModel::class.java) ?: CustomhelpModel() }
             listCurrentHelpModel.forEach { currentHelpModel ->
                 compainNEwItem(currentHelpModel)
 
@@ -63,7 +73,7 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
 
         mRefUsers.child(currentHelpModel.id)
             .addListenerForSingleValueEvent(appValueEventListener { userSnapshot ->
-                currentFriend = userSnapshot.getValue(CommonModel::class.java) ?: CommonModel()
+                currentFriend = userSnapshot.getCommonModel()
 
                 if (currentFriend.fullName == "") {
                     REF_DATABASE_ROOT.child(NODE_PHONES_CONTACTS).child(CURRENT_UID)
@@ -76,7 +86,12 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
                     .addListenerForSingleValueEvent(appValueEventListener { messageSnapShot ->
                         val tempList =
                             messageSnapShot.children.map { a -> a.getCommonMessage() }
-                        currentLastMessage = tempList[0]
+                        if (tempList.isNotEmpty())
+                            currentLastMessage = tempList[0]
+                        else currentLastMessage = MessageModel(time = "")
+
+
+
                         currentMainModel =
                             MainListModel(
                                 currentFriend,
@@ -96,5 +111,9 @@ class MainFragment : Fragment(R.layout.main_list_fragment) {
         mRecyclerView.adapter = mAdapter
         mRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
+        createContentCor = CoroutineScope(Main).launch {
+            createContent()
+            cancel()
+        }
+             }
     }
-}

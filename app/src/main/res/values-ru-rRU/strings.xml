@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Taverna</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -26,9 +27,12 @@
     <string name="EnterGroupName">Введите имя группы</string>
 
     <plurals name="plurals_greate_group">
-    <item quantity="one">%d участник</item>
-    <item quantity="two">%d участника</item>
-    <item quantity="other">%d участников</item>
-</plurals>
+        <item quantity="one">%d участник</item>
+       
+        <item quantity="few">%d участника</item>
+        <item quantity="other">%d участников</item>
+        <item quantity="many">%d участников</item>
+
+    </plurals>
 
 </resources>

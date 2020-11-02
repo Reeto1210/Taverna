@@ -1,68 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    android:id="@+id/contact_item_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:id="@+id/groupAddBaseLayout"
     style="@style/SettingsButtons"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/mainListPhoto"
+        android:id="@+id/addGroupUserPhoto"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
+        android:src="@drawable/bomjara"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/bomjara"
 
         />
 
     <TextView
-        android:id="@+id/contact_fullname"
+        android:id="@+id/groupAddUserfullname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="6dp"
-        android:text="Вася пупкин"
+        android:text="TextView1"
         android:textColor="@color/material_drawer_primary_text"
-        app:layout_constraintStart_toEndOf="@+id/mainListPhoto"
-        app:layout_constraintTop_toTopOf="parent"
-       />
+        app:layout_constraintStart_toEndOf="@+id/addGroupUserPhoto"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-
-        android:maxWidth="230dp"
-       android:maxLines="1"
-        android:layout_marginStart="12dp"
-        android:id="@+id/mainListLastMessage"
+        android:id="@+id/groupAddUserStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="2dp"
-        android:text="ты мне бабок должен"
+        android:text="TextView2"
         android:textColor="@color/material_drawer_secondary_text"
         android:textSize="12dp"
-              app:layout_constraintStart_toEndOf="@+id/mainListPhoto"
-        app:layout_constraintTop_toBottomOf="@+id/contact_fullname" />
+        app:layout_constraintStart_toEndOf="@+id/addGroupUserPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/groupAddUserfullname" />
 
-    <TextView
-       android:id="@+id/mainListMessageTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="12 jrnz,hz"
-        android:textColor="@color/material_drawer_secondary_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="12dp"
-        android:textSize="10sp"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/groupAddCheck"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_check_green"
+        android:visibility="gone"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/md_white_1000"
+        app:civ_circle_background_color="@color/checkGreen"
+        app:layout_constraintBottom_toBottomOf="@+id/addGroupUserPhoto"
+        app:layout_constraintEnd_toEndOf="@+id/addGroupUserPhoto" />
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
@@ -72,5 +66,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
